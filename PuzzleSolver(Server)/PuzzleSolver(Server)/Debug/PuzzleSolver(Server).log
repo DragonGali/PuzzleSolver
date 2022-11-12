@@ -1,0 +1,4 @@
+﻿  PuzzleSolver(Server).cpp
+PuzzleSolver(Server).obj : error LNK2019: unresolved external symbol "private: void __thiscall cv::String::deallocate(void)" (?deallocate@String@cv@@AAEXXZ) referenced in function "public: __thiscall cv::String::~String(void)" (??1String@cv@@QAE@XZ)
+C:\opencv\build\x64\vc15\lib\opencv_world340d.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\Debug\PuzzleSolver(Server).exe : fatal error LNK1120: 1 unresolved externals
