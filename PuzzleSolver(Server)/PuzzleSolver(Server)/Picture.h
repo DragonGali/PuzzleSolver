@@ -19,14 +19,15 @@ private:
 	int _numOfPuzPieces;
 	Mat _image;
 
-	void SharpenImage();
-	void ResizeCanvas();
 	void GrayScale();
+	void RemoveImageNoise();
 
 public:
 	Picture(string link);
 	Mat CreateMask();
 	stack<Mat> CutOutPuzzlePieces();
+	void ShowPicture();
+	void ResizeCanvas();
 
 	
 

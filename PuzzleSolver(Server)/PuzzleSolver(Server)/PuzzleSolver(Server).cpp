@@ -2,5 +2,7 @@
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    Picture picture("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\Pictures\\PictureA.jpg");
+    picture.ResizeCanvas();
+    picture.ShowPicture();  
 }
