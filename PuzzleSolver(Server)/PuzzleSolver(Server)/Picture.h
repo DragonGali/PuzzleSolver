@@ -19,7 +19,8 @@ private:
 	int _numOfPuzPieces;
 	Mat _image;
 
-	void GrayScale();
+	void CreateGrayScale();
+
 	void RemoveImageNoise();
 
 public:
