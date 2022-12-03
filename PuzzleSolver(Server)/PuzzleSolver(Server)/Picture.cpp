@@ -90,44 +90,43 @@ Mat Picture::sobelFilter(Mat grayImage)
 	return filteredImg;
 }
 
-void Picture::applyNonMaxSupression(Mat& srcImage, Mat& srcAngleMap, Mat& dstImage)
+Mat Picture::applyNonMaxSupression(Mat& srcImage)
 {
-	dstImage = cv::Mat(srcImage.rows - 2, srcImage.cols - 2, CV_8UC1);
-	for (int i = 1; i < srcImage.rows - 1; i++) {
-		for (int j = 1; j < srcImage.cols - 1; j++) {
+	Mat nonMaxSupped = Mat(srcImage.rows - 2, srcImage.cols - 2, CV_8UC1);
+	for (int i = 1; i < angleMap.rows - 1; i++) {
+		for (int j = 1; j < angleMap.cols - 1; j++) {
+			float Tangent = angleMap.at<float>(i, j);
 
-			float Tangent = srcAngleMap.at<float>(i, j);
-			dstImage.at<uchar>(i - 1, j - 1) = srcImage.at<uchar>(i, j);
-
+			nonMaxSupped.at<uchar>(i - 1, j - 1) = srcImage.at<uchar>(i, j);
 			//Horizontal Edge
 			if (((-22.5 < Tangent) && (Tangent <= 22.5)) || ((157.5 < Tangent) && (Tangent <= -157.5)))
 			{
-				if ((srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i, j + 1)) || (srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i, j - 1)))
-					dstImage.at<uchar>(i - 1, j - 1) = 0;
+				if ((srcImage.at<uchar>(i, j) <srcImage.at<uchar>(i, j + 1)) || (srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i, j - 1)))
+					nonMaxSupped.at<uchar>(i - 1, j - 1) = 0;
 			}
 			//Vertical Edge
 			if (((-112.5 < Tangent) && (Tangent <= -67.5)) || ((67.5 < Tangent) && (Tangent <= 112.5)))
 			{
 				if ((srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i + 1, j)) || (srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i - 1, j)))
-					dstImage.at<uchar>(i - 1, j - 1) = 0;
+					nonMaxSupped.at<uchar>(i - 1, j - 1) = 0;
 			}
 
-			// -45 Degree Edge
+			//-45 Degree Edge
 			if (((-67.5 < Tangent) && (Tangent <= -22.5)) || ((112.5 < Tangent) && (Tangent <= 157.5)))
 			{
 				if ((srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i - 1, j + 1)) || (srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i + 1, j - 1)))
-					dstImage.at<uchar>(i - 1, j - 1) = 0;
+					nonMaxSupped.at<uchar>(i - 1, j - 1) = 0;
 			}
 
 			//45 Degree Edge
 			if (((-157.5 < Tangent) && (Tangent <= -112.5)) || ((22.5 < Tangent) && (Tangent <= 67.5)))
 			{
 				if ((srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i + 1, j + 1)) || (srcImage.at<uchar>(i, j) < srcImage.at<uchar>(i - 1, j - 1)))
-					dstImage.at<uchar>(i - 1, j - 1) = 0;
+					nonMaxSupped.at<uchar>(i - 1, j - 1) = 0;
 			}
 		}
 	}
-	return;
+	return nonMaxSupped;
 }
 
 Mat Picture::threshold(Mat imgin, int low, int high)
@@ -209,17 +208,39 @@ void Picture::EdgeDetection()
 	BlurrImage();
 	Mat sFiltered = Mat(sobelFilter(grayscale)); //Sobel Filter
 
-	Mat non;
-	applyNonMaxSupression(grayscale, angleMap, non); //Non-Maxima Suppression
-	threshold(non, 20, 40); //Double Threshold and Finalize
+	Mat non = Mat(applyNonMaxSupression(sFiltered));//Non-Maxima Suppression
+	Mat final = Mat(threshold(non, 20, 40)); //Double Threshold and Finalize
 
 	imshow("sfiltered", sFiltered);
 	waitKey(0);
 
-	imshow("nonmax", non);
+	imshow("final edge detect", final);
 	waitKey(0);
 
+	Mat edges = Mat(final);
+	CreateMask(edges);
+
+
 }
+
+Mat Picture::CreateMask(Mat edgeDetection)
+{
+	int mode = CV_RETR_EXTERNAL;
+	int method = CV_CHAIN_APPROX_SIMPLE;
+
+	vector<vector<Point>> BoundaryPoints = findContours(edgeDetection);
+
+	Mat check = Mat(edgeDetection.rows, edgeDetection.cols, edgeDetection.type());
+	fillPoly(check, BoundaryPoints, Scalar(255, 0, 0));
+	floodFill(check, Point(0, 0), Scalar(255));
+
+	imshow("Output",  check);
+	waitKey(0);
+
+	return check;
+
+}
+
 
 void Picture::BlurrImage() // Ill have to make it a 5 * 5 later
 {
@@ -267,4 +288,69 @@ Mat Picture::CreateGrayScale()
 		}
 	return grayscaled;
 }
+
+
+
+
+vector<vector<Point>> Picture::findContours(Mat grid)
+{
+
+	// Keep track of the visited pixels to avoid processing them multiple times.
+	vector<vector<bool>> visited(grid.rows, vector<bool>(grid.cols));
+
+	// Keep track of the filled contours.
+	vector<vector<Point>> contours;
+
+	// Iterate over all the pixels in the image.
+	for (int y = 0; y < grid.rows; ++y) {
+		for (int x = 0; x < (grid.cols); ++x) {
+			if (visited[y][x] || grid.at<uchar>(y, x) == 0) continue;  // Skip visited pixels or background pixels.
+
+			// Start a new contour. This is the moment we found a seed point
+			vector<Point> contour;
+			stack<Point> stack;
+
+			// Push the seed point onto the stack and mark it as visited.
+			Point seed = { x, y };
+			stack.push(seed);
+			visited[y][x] = true;
+
+			// Flood fill the contour.
+			while (!stack.empty()) {
+				Point p = stack.top();
+				stack.pop();
+
+				// Add the current point to the contour.
+				contour.push_back(p);
+
+				// Check the neighbors of the current point.
+				for (const Point& neighbor : neighbors(p)) {
+					if (neighbor.x < 0 || neighbor.x >= grid.cols ||  // Skip out-of-bounds pixels.
+						neighbor.y < 0 || neighbor.y >= grid.rows ||
+						visited[neighbor.y][neighbor.x] ||  // Skip visited pixels.
+						grid.at<uchar>(neighbor.y,neighbor.x) == 0)
+						continue; // Skip background pixels.
+
+					stack.push(neighbor);
+					visited[neighbor.y][neighbor.x] = true;
+				}
+			}
+			if (contour.front() != contour.back() && contour.size() > 50)
+			{
+
+				// Add the filled contour to the output.
+				contours.push_back(contour);
+			}
+		}
+	}
+	return contours;
+	
+}
+
+
+
+
+
+
+
 

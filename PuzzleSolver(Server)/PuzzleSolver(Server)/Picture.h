@@ -14,6 +14,8 @@
 #include <cmath>
 #include <complex>
 #define _USE_MATH_DEFINES
+//#include <amp_graphics.h>
+//#include <dos.h>
 
 using namespace std;
 using namespace cv;
@@ -34,16 +36,24 @@ private:
 	Mat angleMap;
 
 	Mat CreateGrayScale();
-	void RemoveImageNoise();
 	void EdgeDetection();
 	void BlurrImage();
 	Mat sobelFilter(Mat grayImage);
-	void applyNonMaxSupression(Mat& srcImage, Mat& srcAngleMap, Mat& dstImage);
+	Mat applyNonMaxSupression(Mat& srcImage);
 	Mat threshold(Mat imgin, int low, int high);
+	vector<vector<Point>> findContours(Mat grid);
+
+	vector<Point> neighbors(const Point& p) {
+		return {
+				{p.x - 1, p.y - 1}, {p.x, p.y - 1}, {p.x + 1, p.y - 1},
+				{p.x - 1, p.y},                 {p.x + 1, p.y},
+				{p.x - 1, p.y + 1}, {p.x, p.y + 1}, {p.x + 1, p.y + 1}
+		};
+	}
 
 public:
 	Picture(string link);
-	Mat CreateMask();
+	Mat CreateMask(Mat edgeDetection);
 	stack<Mat> CutOutPuzzlePieces();
 	void ShowPicture();
 	void ResizeCanvas();
