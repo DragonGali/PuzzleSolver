@@ -1,7 +1,40 @@
-﻿  PuzzleSolver(Server).cpp
+﻿  Picture.cpp
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(90,48): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(95,50): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(278,37): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+          and
+          [
+              _Tp=int
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(278,28): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+          and
+          [
+              _Tp=int
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(347,33): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=uchar
+          ]
   Generating code
-  8 of 734 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
+  7 of 765 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    15 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   PuzzleSolver(Server).vcxproj -> C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\x64\Release\PuzzleSolver(Server).exe

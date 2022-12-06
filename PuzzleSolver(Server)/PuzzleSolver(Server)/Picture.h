@@ -30,18 +30,18 @@ class Picture
 {
 private:
 
-	//Dont think i need the size and type of the image for now
-	int _numOfPuzPieces;
+	vector<Mat> _pieces;
 	Mat _image;
 	Mat angleMap;
+	vector<vector<Point>> BoundaryPoints;
 
 	Mat CreateGrayScale();
-	void EdgeDetection();
-	void BlurrImage();
+	Mat EdgeDetection();
 	Mat sobelFilter(Mat grayImage);
 	Mat applyNonMaxSupression(Mat& srcImage);
 	Mat threshold(Mat imgin, int low, int high);
 	vector<vector<Point>> findContours(Mat grid);
+	Mat bitwise_and_255(Mat mask, int f);
 
 	vector<Point> neighbors(const Point& p) {
 		return {
@@ -53,9 +53,8 @@ private:
 
 public:
 	Picture(string link);
-	Mat CreateMask(Mat edgeDetection);
-	stack<Mat> CutOutPuzzlePieces();
-	void ShowPicture();
+	void CreateMask();
+	void ShowPicture(Mat image);
 	void ResizeCanvas();
 
 	

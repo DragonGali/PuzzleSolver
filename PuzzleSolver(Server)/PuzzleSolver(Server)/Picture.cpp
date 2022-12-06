@@ -4,13 +4,15 @@ Picture::Picture(string link)
 {
 	_image = imread(link);
 	ResizeCanvas();
-	ShowPicture();
-	EdgeDetection();
+	ShowPicture(_image);
+	CreateMask();
+
+
 }
 
-void Picture::ShowPicture() // Function for chwecking how the image looks.
+void Picture::ShowPicture(Mat image) // Function for chwecking how the image looks.
 {
-	imshow("image", _image);
+	imshow("image", image);
 	waitKey(0);
 }
 
@@ -25,6 +27,15 @@ void Picture::ResizeCanvas()
 {
 	resize(_image, _image, cvSize(320, 200));
 }
+
+/*
+   Applies the Sobel operator to an image to highlight its edges.
+ 
+   The Sobel operator uses two 3x3 convolution kernels, one for detecting
+   horizontal edges and one for detecting vertical edges. These kernels are
+   applied to the image separately, and the resulting output images are then
+   combined to produce the final edge-detected image.
+*/
 
 Mat Picture::sobelFilter(Mat grayImage)
 {
@@ -90,6 +101,15 @@ Mat Picture::sobelFilter(Mat grayImage)
 	return filteredImg;
 }
 
+/*
+ Applies non-maximum suppression to an image to thin its edges.
+ 
+  Non-maximum suppression is a technique that is commonly used in edge detection algorithms
+  to thin the edges in an image. It works by comparing the intensity values of each pixel
+  with its neighbors, and suppressing (setting to zero) those pixels that are not local
+  maxima along the edge direction. This helps to produce a thin, crisp edge in the output image.
+*/
+
 Mat Picture::applyNonMaxSupression(Mat& srcImage)
 {
 	Mat nonMaxSupped = Mat(srcImage.rows - 2, srcImage.cols - 2, CV_8UC1);
@@ -128,6 +148,16 @@ Mat Picture::applyNonMaxSupression(Mat& srcImage)
 	}
 	return nonMaxSupped;
 }
+
+/*
+ 
+ Applies thresholding to an image to convert it to a binary image.
+ 
+ Thresholding is a process that converts an image into a binary image,
+ where each pixel is either black or white, depending on whether it meets
+ a certain criterion. This criterion can be based on the intensity value of the pixel,
+ or on other properties of the image, such as its gradient or texture.
+*/
 
 Mat Picture::threshold(Mat imgin, int low, int high)
 {
@@ -200,58 +230,96 @@ Mat Picture::threshold(Mat imgin, int low, int high)
 	return EdgeMat;
 }
 
-void Picture::EdgeDetection()
+/*
+  This function calls out the functions needed to create a perfect edge detected image and 
+  returns it for the createMask() function.
+*/
+Mat Picture::EdgeDetection()
 {
 	Mat grayscale = CreateGrayScale();
-	ShowPicture();
+	ShowPicture(_image);
 
-	BlurrImage();
 	Mat sFiltered = Mat(sobelFilter(grayscale)); //Sobel Filter
 
 	Mat non = Mat(applyNonMaxSupression(sFiltered));//Non-Maxima Suppression
 	Mat final = Mat(threshold(non, 20, 40)); //Double Threshold and Finalize
 
-	imshow("sfiltered", sFiltered);
-	waitKey(0);
+	ShowPicture(sFiltered);
 
-	imshow("final edge detect", final);
-	waitKey(0);
+	ShowPicture(final);
 
 	Mat edges = Mat(final);
-	CreateMask(edges);
+	return edges;
 
 
 }
 
-Mat Picture::CreateMask(Mat edgeDetection)
+/*
+	Uses various build in or custom made functions in order to produce a mask and cut out the\
+	puzzle pieces out of it.
+*/
+void Picture::CreateMask()
 {
+	Mat edgeDetection = EdgeDetection();
+
 	int mode = CV_RETR_EXTERNAL;
 	int method = CV_CHAIN_APPROX_SIMPLE;
 
-	vector<vector<Point>> BoundaryPoints = findContours(edgeDetection);
+	BoundaryPoints = findContours(edgeDetection);
+	vector<vector<Point>> temp;
+	Mat mask = Mat(edgeDetection.size(), edgeDetection.type());
 
-	Mat check = Mat(edgeDetection.rows, edgeDetection.cols, edgeDetection.type());
-	fillPoly(check, BoundaryPoints, Scalar(255, 0, 0));
-	floodFill(check, Point(0, 0), Scalar(255));
+	for (int i = 0; i < BoundaryPoints.size(); i++) {
+		mask = 0;
+		vector<vector<Point>> temp;
+		temp.push_back(BoundaryPoints[i]);
+		fillPoly(mask, temp, Scalar(255, 255, 255));
+		Scalar Mean = mean(temp[0]);
+		Point Center(Point(Mean[0], Mean[1]));
 
-	imshow("Output",  check);
-	waitKey(0);
+		floodFill(mask, Center, Scalar(255, 255, 255));
+		ShowPicture(mask);
+		Mat Piece = Mat(bitwise_and_255(mask, i));
+		ShowPicture(Piece);
 
-	return check;
+		_pieces.push_back(Piece);
+	}
+
 
 }
 
+/*
+	Applies bitwise
 
-void Picture::BlurrImage() // Ill have to make it a 5 * 5 later
+	I created this custom bitwise function, because topencv built in function only works if the 
+	mask has either 0 or one but in my case its 0 and 255. In order for the image to not get its color maximied
+	I instead made an empty image and I fill the pixels that are white in the mask into the original image pixels.
+*/
+Mat Picture::bitwise_and_255(Mat mask, int f)
 {
-	Mat kernal1 = (Mat_<double>(3, 3) << 1 / 16.0, 2 / 16.0, 1 / 16.0,
-										 2 / 16.0, 4 / 16.0, 2 / 16.0,
-										 1 / 16.0, 2 / 16.0, 1 / 16.0);
+
+	// create the output Mat object with the same size and data type as the image and the mask
+	Mat output = Mat(mask.size(), _image.type());
+
+	// iterate over the pixels in the image and the mask
+	for (int i = 0; i < mask.rows; i++)
+	{
+		for (int j = 0; j < mask.cols; j++)
+		{
 
 
-	filter2D(_image, _image, -1, kernal1, Point(-1, -1), 0, 4);
+
+			if (mask.at<uchar>(i, j) == 255)
+			{
+				output.at<Vec3b>(i, j) = _image.at<Vec3b>(i + 2, j + 2);// I add two pixels because the sobel filter decreases 2.
+			}
+
+		}
+	}
+
+
+	return output;
 }
-
 
 
 
@@ -292,6 +360,15 @@ Mat Picture::CreateGrayScale()
 
 
 
+/*
+	returns a vector of contours in the image.
+
+	This function works by the moore tracing algorithm.
+	It searches for neighbour pixels that are also white and adds them
+	to the contour. The only problem with this is that the contour has to be connected 
+	so if its a bad image this wont work.
+
+*/
 vector<vector<Point>> Picture::findContours(Mat grid)
 {
 
@@ -335,7 +412,7 @@ vector<vector<Point>> Picture::findContours(Mat grid)
 					visited[neighbor.y][neighbor.x] = true;
 				}
 			}
-			if (contour.front() != contour.back() && contour.size() > 50)
+			if (contour.front() != contour.back() && contour.size() > 50)// getting rid of bad contours
 			{
 
 				// Add the filled contour to the output.
@@ -346,6 +423,8 @@ vector<vector<Point>> Picture::findContours(Mat grid)
 	return contours;
 	
 }
+
+
 
 
 
