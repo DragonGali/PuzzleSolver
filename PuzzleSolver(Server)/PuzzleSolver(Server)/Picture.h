@@ -8,26 +8,53 @@
 
 #include <opencv2/opencv.hpp>
 #include <stack>
+#include <cstdint>
+#include <stdint.h>
+
+#include <cmath>
+#include <complex>
+#define _USE_MATH_DEFINES
+//#include <amp_graphics.h>
+//#include <dos.h>
+
 using namespace std;
 using namespace cv;
+
+typedef __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
 
 class Picture
 {
 private:
 
-	//Dont think i need the size and type of the image for now
-	int _numOfPuzPieces;
+	vector<Mat> _pieces;
 	Mat _image;
+	Mat angleMap;
+	vector<vector<Point>> BoundaryPoints;
 
-	void CreateGrayScale();
+	Mat CreateGrayScale();
+	Mat EdgeDetection();
+	Mat sobelFilter(Mat grayImage);
+	Mat applyNonMaxSupression(Mat& srcImage);
+	Mat threshold(Mat imgin, int low, int high);
+	vector<vector<Point>> findContours(Mat grid);
+	Mat bitwise_and_255(Mat mask, int f);
 
-	void RemoveImageNoise();
+	vector<Point> neighbors(const Point& p) {
+		return {
+				{p.x - 1, p.y - 1}, {p.x, p.y - 1}, {p.x + 1, p.y - 1},
+				{p.x - 1, p.y},                 {p.x + 1, p.y},
+				{p.x - 1, p.y + 1}, {p.x, p.y + 1}, {p.x + 1, p.y + 1}
+		};
+	}
 
 public:
 	Picture(string link);
-	Mat CreateMask();
-	stack<Mat> CutOutPuzzlePieces();
-	void ShowPicture();
+	void CreateMask();
+	void ShowPicture(Mat image);
 	void ResizeCanvas();
 
 	
