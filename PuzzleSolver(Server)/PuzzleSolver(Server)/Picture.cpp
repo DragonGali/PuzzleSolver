@@ -265,7 +265,7 @@ void Picture::CreateMask()
 	int mode = CV_RETR_EXTERNAL;
 	int method = CV_CHAIN_APPROX_SIMPLE;
 
-	BoundaryPoints = findContours(edgeDetection);
+	vector<vector<Point>> BoundaryPoints = findContours(edgeDetection);
 	vector<vector<Point>> temp;
 	Mat mask = Mat(edgeDetection.size(), edgeDetection.type());
 
@@ -282,7 +282,7 @@ void Picture::CreateMask()
 		Mat Piece = Mat(bitwise_and_255(mask, i));
 		ShowPicture(Piece);
 
-		_pieces.push_back(Piece);
+		_pieces.push_back(PuzzlePiece(BoundaryPoints[0], Center, Piece));
 	}
 
 
