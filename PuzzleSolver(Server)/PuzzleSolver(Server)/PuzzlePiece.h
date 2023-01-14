@@ -32,14 +32,22 @@ private:
 	Point _center;
 	vector<vector<Point>> _subContours;
 	string type;
+	int _counter;
+	Mat _mask;
+
+	double L(Point A, Point B);
+	double angle(Point A, Point B, Point C);
+	double Area(vector<Point> corners);
+	void permute(vector<Point>& arr, int l, int r, int target, int delta, vector<Point>& bestpoints, int& deg90_counter);
+	double distance(Point A, Point B);
 
 public:
 	void findEdgePoints();
-	void seperateSubContours();
+	void seperateSubContours(vector<Point> points);
 	void calcDistance();
 	void fixRotation();
 
-	PuzzlePiece(vector<Point> contour, Point center, Mat pic);
+	PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask);
 
 
 };

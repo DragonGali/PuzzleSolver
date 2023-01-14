@@ -282,7 +282,7 @@ void Picture::CreateMask()
 		Mat Piece = Mat(bitwise_and_255(mask, i));
 		ShowPicture(Piece);
 
-		_pieces.push_back(PuzzlePiece(BoundaryPoints[0], Center, Piece));
+		_pieces.push_back(PuzzlePiece(BoundaryPoints[i], Center, Piece, mask));
 	}
 
 
