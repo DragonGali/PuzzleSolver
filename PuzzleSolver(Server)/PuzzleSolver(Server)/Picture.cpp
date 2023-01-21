@@ -265,7 +265,7 @@ void Picture::CreateMask()
 	int mode = CV_RETR_EXTERNAL;
 	int method = CV_CHAIN_APPROX_SIMPLE;
 
-	BoundaryPoints = findContours(edgeDetection);
+	vector<vector<Point>> BoundaryPoints = findContours(edgeDetection);
 	vector<vector<Point>> temp;
 	Mat mask = Mat(edgeDetection.size(), edgeDetection.type());
 
@@ -282,7 +282,14 @@ void Picture::CreateMask()
 		Mat Piece = Mat(bitwise_and_255(mask, i));
 		ShowPicture(Piece);
 
-		_pieces.push_back(Piece);
+
+		Mat contourMat = Mat(mask.size(), mask.type());
+		Canny(mask, contourMat, 50, 150, 3, true);
+
+		vector<vector<Point>> contour = findContours(contourMat);
+
+
+		_pieces.push_back(PuzzlePiece(contour[0], Center, Piece, mask));
 	}
 
 
@@ -397,15 +404,31 @@ vector<vector<Point>> Picture::findContours(Mat grid)
 				Point p = stack.top();
 				stack.pop();
 
-				// Add the current point to the contour.
-				contour.push_back(p);
+				// Check if the current point is a boundary pixel
+				bool isBoundary = false;
+				for (const Point& neighbor : neighbors(p)) {
+					if (neighbor.x < 0 || neighbor.x >= grid.cols ||  // Skip out-of-bounds pixels.
+						neighbor.y < 0 || neighbor.y >= grid.rows ||
+						visited[neighbor.y][neighbor.x]) // Skip visited pixels.
+						continue;
+
+					if (grid.at<uchar>(neighbor.y, neighbor.x) != grid.at<uchar>(p.y, p.x)) {
+						isBoundary = true;
+						break;
+					}
+				}
+
+				// Add the current point to the contour if it's a boundary pixel.
+				if (isBoundary) {
+					contour.push_back(p);
+				}
 
 				// Check the neighbors of the current point.
 				for (const Point& neighbor : neighbors(p)) {
 					if (neighbor.x < 0 || neighbor.x >= grid.cols ||  // Skip out-of-bounds pixels.
 						neighbor.y < 0 || neighbor.y >= grid.rows ||
 						visited[neighbor.y][neighbor.x] ||  // Skip visited pixels.
-						grid.at<uchar>(neighbor.y,neighbor.x) == 0)
+						grid.at<uchar>(neighbor.y, neighbor.x) == 0)
 						continue; // Skip background pixels.
 
 					stack.push(neighbor);
