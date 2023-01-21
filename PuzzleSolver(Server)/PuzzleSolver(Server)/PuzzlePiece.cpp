@@ -13,12 +13,9 @@ PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask)
 
 /*
 
-	This function uses an algorithm invented by me and I shall dub it the "Gali algorithm".
-	What this algorithm does is use the convexHull to mark the outer rectangle of the puzzle piece, 
-	what we want is the inner rectangle, that why when we hit the first side of the red rectangle we start counting,
-	we count until we see it again, we also cound the whie pixels in the line, if the line is an inner rectangle line
-	then that means that the number of white pixels is supposed to be at least two thirds. This isnt the "Perfect" method
-	but it works. This method works best for puzzle pieces that are standing upright.
+	This function uses opencv functio s in order to find the points on the mask that have the most
+	edge in them, then the function filters out the points by finding a set of four points that have 90 degrees between
+	them and have the most area.
 
 */
 
@@ -60,6 +57,9 @@ void PuzzlePiece::findEdgePoints()
 	int target = 90; //deg
 	int delta = 5; //deg
 	vector<Point> bestpoints;
+	vector<Point> maxPoints;
+
+	double maxArea = 0;
 
 	for (int i = 0; i < centroids.size(); i++) {
 		for (int j = i + 1; j < centroids.size(); j++) {
@@ -67,6 +67,7 @@ void PuzzlePiece::findEdgePoints()
 				for (int l = k + 1; l < centroids.size(); l++) {
 					vector<Point> points = { centroids[i], centroids[j], centroids[k], centroids[l] };
 					int deg90_counter = 0;
+
 					if (abs(angle(points[0], points[1], points[2]) - target) < delta) {
 						deg90_counter += 1;
 					}
@@ -79,8 +80,10 @@ void PuzzlePiece::findEdgePoints()
 					if (abs(angle(points[1], points[2], points[3]) - target) < delta) {
 						deg90_counter += 1;
 					}
-					if (deg90_counter >= 2) {
-						bestpoints.insert(bestpoints.end(), points.begin(), points.end());
+
+					if (deg90_counter >= 2 && Area(points) > maxArea || deg90_counter > 2) {
+						maxArea = Area(points);
+						maxPoints = points;
 					}
 
 				}
@@ -88,17 +91,22 @@ void PuzzlePiece::findEdgePoints()
 		}
 	}
 
-	//for (int i = 0; i < 4; i++) {
-	//	circle(_pic, bestpoints[i], 5, Scalar(255, 255, 0), -1);
-	//}
+	bestpoints.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
 	
 	seperateSubContours(bestpoints);
-
 
 	imshow("PIC", _pic);
 	waitKey(0);
 	
 }
+
+/*
+
+	This function seperates the contour into "sub - contours" in order to aproximate the
+	shape of the puzzle piece later, it forst finds the closest points on the contour to the points found priviously
+	and then loops throgh all of them adding each subcontour into a seperate vector.
+
+*/
 
 void PuzzlePiece::seperateSubContours(vector<Point> points)
 {
@@ -136,53 +144,74 @@ void PuzzlePiece::seperateSubContours(vector<Point> points)
 	circle(_pic, D, 5, Scalar(255, 255, 0), -1);
 
 	int start_stop = 0;
-	int i = 0;
+	int i = _contour.size() - 1;
+	int j = 0;
+	
+	vector<Point> vec1;
+	vector<Point> vec2;
+	vector<Point> vec3;
+	vector<Point> vec4;
 
-	while(start_stop != 4)
+	
+	while(start_stop != 5)
 	{
-		if (_contour[i] == A)
+		if (_contour[i] == A || _contour[i] == B || _contour[i] == C || _contour[i] == D)
 		{
 			start_stop++;
+			j = 1;
 		}
-
-		else if (_contour[i] == B)
-		{
-			start_stop++;
-		}
-
-
 
 		if (start_stop == 1)
 		{
-			_pic.at<Vec3b>(_contour[i]) = Vec3b(255, 0, 0);
+			vec1.push_back(_contour[i]);
+		}
+
+		if (start_stop == 2)
+		{
+			vec2.push_back(_contour[i]);
+		}
+
+		if (start_stop == 3)
+		{
+			vec3.push_back(_contour[i]);
+		}
+
+		if (start_stop == 4)
+		{
+			vec4.push_back(_contour[i]);
 		}
 
 		
-		i++;
+		i--;
 
-		if (i == _contour.size() - 1)
+		if (i == 0)
 		{
-			i = 0;
+			i = _contour.size() - 1;
 		}
 	}
 
-	cv::imshow("PIC", _pic);
-	cv::waitKey(0);
+	imshow("PIC", _pic);
+	waitKey(0);
 
+	_subContours.push_back(vec1);
+	_subContours.push_back(vec2);
+	_subContours.push_back(vec3);
+	_subContours.push_back(vec4);
+	
 	
 }
 
-double PuzzlePiece::distance(Point A, Point B)
+double PuzzlePiece::distance(Point A, Point B)// calculates the distance between two points
 {
 	return sqrt(pow(A.x - B.x, 2) + pow(A.y - B.y, 2));
 }
 
-double PuzzlePiece::L(Point A, Point B) {
+double PuzzlePiece::L(Point A, Point B) {//is used to calculate the angle between three points
 	// Return length between A and B
 	return sqrt(pow(A.x - B.x, 2) + pow(A.y - B.y, 2));
 }
 
-double PuzzlePiece::angle(Point A, Point B, Point C) {
+double PuzzlePiece::angle(Point A, Point B, Point C) {// calculates the angle between three points
 	// Return angle between the points A-B-C in degrees
 	double num = (L(A, B) * L(A, B) + L(B, C) * L(B, C) - L(A, C) * L(A, C));
 	double den = (2 * L(A, B) * L(B, C));
@@ -190,7 +219,7 @@ double PuzzlePiece::angle(Point A, Point B, Point C) {
 }
 
 
-double PuzzlePiece::Area(vector<Point> corners) {
+double PuzzlePiece::Area(vector<Point> corners) {// calculates the area between the corners of the puzzle piece
 	//By means of "shoelace algorithm"
 	int n = corners.size(); // of corners
 	double area = 0.0;

@@ -38,7 +38,6 @@ private:
 	double L(Point A, Point B);
 	double angle(Point A, Point B, Point C);
 	double Area(vector<Point> corners);
-	void permute(vector<Point>& arr, int l, int r, int target, int delta, vector<Point>& bestpoints, int& deg90_counter);
 	double distance(Point A, Point B);
 
 public:
