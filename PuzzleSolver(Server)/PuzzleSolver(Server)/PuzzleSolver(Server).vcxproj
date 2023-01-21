@@ -146,10 +146,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Picture.cpp" />
+    <ClCompile Include="PuzzlePiece.cpp" />
     <ClCompile Include="PuzzleSolver(Server).cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Picture.h" />
+    <ClInclude Include="PuzzlePiece.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
