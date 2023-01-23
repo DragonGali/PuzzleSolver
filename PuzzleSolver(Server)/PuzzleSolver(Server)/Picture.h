@@ -30,8 +30,6 @@ public:
 	void CreateMask();
 	void ShowPicture(Mat image);
 	void ResizeCanvas();
-
-	
-
+	std::vector <pair<vector<Point>, vector<Point>>> findMatches();
 
 };

@@ -31,7 +31,7 @@ void PuzzlePiece::findEdgePoints()
 	double minValue, maxValue;
 	Point minLocation, maxLocation;
 	minMaxLoc(data, &minValue, &maxValue, &minLocation, &maxLocation);
-	threshold(data, data, 0.2 * maxValue, 1, THRESH_TOZERO);
+	threshold(data, data, 0.5 * maxValue, 1, THRESH_TOZERO);
 	Mat blobs = data.clone();
 	blobs.convertTo(blobs, CV_8UC1);
 	vector<vector<Point>> contours0;
@@ -81,7 +81,8 @@ void PuzzlePiece::findEdgePoints()
 						deg90_counter += 1;
 					}
 
-					if (deg90_counter >= 2 && Area(points) > maxArea || deg90_counter > 2) {
+
+					if ((Area(points) >= maxArea) && deg90_counter == 2) {
 						maxArea = Area(points);
 						maxPoints = points;
 					}
@@ -91,9 +92,11 @@ void PuzzlePiece::findEdgePoints()
 		}
 	}
 
-	bestpoints.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
+
+
+	_points.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
 	
-	seperateSubContours(bestpoints);
+	seperateSubContours();
 
 	imshow("PIC", _pic);
 	waitKey(0);
@@ -108,7 +111,7 @@ void PuzzlePiece::findEdgePoints()
 
 */
 
-void PuzzlePiece::seperateSubContours(vector<Point> points)
+void PuzzlePiece::seperateSubContours()
 {
 	Point A = Point(0, 0);
 	Point B = Point(0, 0);
@@ -117,22 +120,22 @@ void PuzzlePiece::seperateSubContours(vector<Point> points)
 
 	for (int i = 0; i < _contour.size(); i++)
 	{
-		if (distance(_contour[i], points[0]) < distance(A, points[0]))
+		if (distance(_contour[i], _points[0]) < distance(A, _points[0]))
 		{
 			A = _contour[i];
 		}
 
-		else if (distance(_contour[i], points[1]) < distance(B, points[1]))
+		else if (distance(_contour[i], _points[1]) < distance(B, _points[1]))
 		{
 			B = _contour[i];
 		}
 
-		else if (distance(_contour[i], points[2]) < distance(C, points[2]))
+		else if (distance(_contour[i], _points[2]) < distance(C, _points[2]))
 		{
 			C = _contour[i];
 		}
 
-		else if (distance(_contour[i], points[3]) < distance(D, points[3]))
+		else if (distance(_contour[i], _points[3]) < distance(D, _points[3]))
 		{
 			D = _contour[i];
 		}
@@ -168,11 +171,13 @@ void PuzzlePiece::seperateSubContours(vector<Point> points)
 
 		if (start_stop == 2)
 		{
+
 			vec2.push_back(_contour[i]);
 		}
 
 		if (start_stop == 3)
 		{
+
 			vec3.push_back(_contour[i]);
 		}
 
@@ -220,15 +225,16 @@ double PuzzlePiece::angle(Point A, Point B, Point C) {// calculates the angle be
 
 
 double PuzzlePiece::Area(vector<Point> corners) {// calculates the area between the corners of the puzzle piece
-	//By means of "shoelace algorithm"
-	int n = corners.size(); // of corners
-	double area = 0.0;
-	for (int i = 0; i < n; i++) {
-		int j = (i + 1) % n;
-		area += corners[i].x * corners[j].y;
-		area -= corners[j].x * corners[i].y;
+	 // Create a convex hull from the corner points
+	vector<Point> hull;
+	convexHull(corners, hull);
+	// Check if the convex hull has 4 points (a quadrilateral)
+	if (hull.size() != 4) {
+		// Return -1 if the convex hull does not have 4 points
+		return -1;
 	}
-	area = abs(area) / 2.0;
+	// Calculate the area of the quadrilateral
+	double area = contourArea(hull);
 	return area;
 }
 

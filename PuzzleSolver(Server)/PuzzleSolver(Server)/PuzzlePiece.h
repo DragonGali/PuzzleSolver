@@ -30,10 +30,10 @@ private:
 	Mat _pic;
 	vector<Point> _contour;
 	Point _center;
-	vector<vector<Point>> _subContours;
 	string type;
 	int _counter;
 	Mat _mask;
+	vector<Point> _points;
 
 	double L(Point A, Point B);
 	double angle(Point A, Point B, Point C);
@@ -42,9 +42,11 @@ private:
 
 public:
 	void findEdgePoints();
-	void seperateSubContours(vector<Point> points);
+	void seperateSubContours();
 	void calcDistance();
 	void fixRotation();
+
+	vector<vector<Point>> _subContours;
 
 	PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask);
 

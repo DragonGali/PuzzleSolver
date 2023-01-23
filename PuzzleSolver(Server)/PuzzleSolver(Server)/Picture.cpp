@@ -7,7 +7,7 @@ Picture::Picture(string link)
 	ShowPicture(_image);
 	CreateMask();
 
-
+	std::vector<std::pair<vector<Point>, vector<Point>>> pairs = findMatches();
 }
 
 void Picture::ShowPicture(Mat image) // Function for chwecking how the image looks.
@@ -445,6 +445,30 @@ vector<vector<Point>> Picture::findContours(Mat grid)
 	}
 	return contours;
 	
+}
+
+std::vector<std::pair<vector<Point>,vector<Point>>> Picture::findMatches()
+{
+	std::vector<std::pair<std::vector<Point>, std::vector<Point>>> matches;
+	for (int i = 0; i < _pieces.size(); i++) {
+		for (int k = 0; k < 4; k++) {
+			double minSimilarity = DBL_MAX;
+			std::pair<std::vector<Point>, std::vector<Point>> mostSimilarMatch;
+			for (int j = 0; j < _pieces.size(); j++) {
+				for (int l = 0; l < 4; l++) {
+					if (i != j) {
+						double similarity = matchShapes(_pieces[i]._subContours[k], _pieces[j]._subContours[l], CV_CONTOURS_MATCH_I1, 0);
+						if (similarity < minSimilarity) {
+							minSimilarity = similarity;
+							mostSimilarMatch = std::make_pair(_pieces[i]._subContours[k], _pieces[j]._subContours[l]);
+						}
+					}
+				}
+			}
+			matches.push_back(mostSimilarMatch);
+		}
+	}
+	return matches;
 }
 
 
