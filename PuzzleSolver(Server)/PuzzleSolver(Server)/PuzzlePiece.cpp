@@ -9,6 +9,8 @@ PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask)
 	_mask = mask;
 
 	findEdgePoints();
+	seperateSubContours();
+	fixRotation();
 }
 
 /*
@@ -95,11 +97,6 @@ void PuzzlePiece::findEdgePoints()
 
 
 	_points.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
-	
-	seperateSubContours();
-
-	imshow("PIC", _pic);
-	waitKey(0);
 	
 }
 
@@ -236,6 +233,31 @@ double PuzzlePiece::Area(vector<Point> corners) {// calculates the area between 
 	// Calculate the area of the quadrilateral
 	double area = contourArea(hull);
 	return area;
+}
+
+
+/*
+
+	This function calculates the angle of the puzzle piece with minAreaRect and rotates the image
+	for it to be positioned streight, this is done inorder to fit the pieces together later.
+
+*/
+void PuzzlePiece::fixRotation()
+{
+	RotatedRect rect = minAreaRect(_points);
+	float angle = rect.angle;
+	if (rect.size.width < rect.size.height)
+		angle += 90.0;
+
+	cv::Point2f center = rect.center;
+	cv::Mat rot_mat = cv::getRotationMatrix2D(center, angle, 1.0);
+	cv::Mat rotated_image;
+	cv::warpAffine(_pic, rotated_image, rot_mat, _pic.size());
+
+	imshow("rotated", rotated_image);
+	waitKey(0);
+
+	_pic = rotated_image;
 }
 
 

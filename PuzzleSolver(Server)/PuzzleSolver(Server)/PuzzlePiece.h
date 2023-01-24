@@ -31,7 +31,6 @@ private:
 	vector<Point> _contour;
 	Point _center;
 	string type;
-	int _counter;
 	Mat _mask;
 	vector<Point> _points;
 

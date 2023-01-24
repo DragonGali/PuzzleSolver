@@ -8,6 +8,7 @@ Picture::Picture(string link)
 	CreateMask();
 
 	std::vector<std::pair<vector<Point>, vector<Point>>> pairs = findMatches();
+
 }
 
 void Picture::ShowPicture(Mat image) // Function for chwecking how the image looks.
