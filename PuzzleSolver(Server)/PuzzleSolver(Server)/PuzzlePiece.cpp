@@ -1,14 +1,77 @@
 #include "PuzzlePiece.h"
 
-
-PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask)
+PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask, int id)
 {
+	double threshold = 3;
+	_contour.push_back(contour[0]);
+	contour.erase(contour.begin());
+
+	while (!contour.empty()) {
+		std::vector<double> distances;
+		for (cv::Point b : contour) {
+			distances.push_back(distance(_contour.back(), b));
+		}
+		int index = std::distance(distances.begin(), std::min_element(distances.begin(), distances.end()));
+		cv::Point point = contour[index];
+		contour.erase(contour.begin() + index);
+		if (distances[index] < threshold) {
+			_contour.push_back(point);
+		}
+	}
+
+
 	_pic = pic;
 	_center = center;
-	_contour = contour;
 	_mask = mask;
+	_id = id;
+	_hasMoved = false;
 
 	findEdgePoints();
+	if (_points.size() != 0)
+	{
+		seperateSubContours();
+	}
+	//fixRotation();
+}
+
+int PuzzlePiece::getId()
+{
+	return _id;
+}
+
+Mat PuzzlePiece::getImage()
+{
+	return _pic;
+}
+
+vector<Point> PuzzlePiece::getContour()
+{
+	return _contour;
+}
+
+vector<Point> PuzzlePiece::getPoints()
+{
+	return _points;
+}
+
+Point PuzzlePiece::getCenter()
+{
+	return _center;
+}
+
+void PuzzlePiece::setContour(vector<Point> contour)
+{
+	_contour = contour;
+}
+
+bool PuzzlePiece::checkMovement()
+{
+	return _hasMoved;
+}
+
+void PuzzlePiece::Moved()
+{
+	_hasMoved = true;
 }
 
 /*
@@ -31,7 +94,7 @@ void PuzzlePiece::findEdgePoints()
 	double minValue, maxValue;
 	Point minLocation, maxLocation;
 	minMaxLoc(data, &minValue, &maxValue, &minLocation, &maxLocation);
-	threshold(data, data, 0.2 * maxValue, 1, THRESH_TOZERO);
+	threshold(data, data, 0.5 * maxValue, 1, THRESH_TOZERO);
 	Mat blobs = data.clone();
 	blobs.convertTo(blobs, CV_8UC1);
 	vector<vector<Point>> contours0;
@@ -81,7 +144,8 @@ void PuzzlePiece::findEdgePoints()
 						deg90_counter += 1;
 					}
 
-					if (deg90_counter >= 2 && Area(points) > maxArea || deg90_counter > 2) {
+
+					if ((Area(points) >= maxArea) && deg90_counter == 2) {
 						maxArea = Area(points);
 						maxPoints = points;
 					}
@@ -91,12 +155,9 @@ void PuzzlePiece::findEdgePoints()
 		}
 	}
 
-	bestpoints.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
-	
-	seperateSubContours(bestpoints);
 
-	imshow("PIC", _pic);
-	waitKey(0);
+
+	_points.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
 	
 }
 
@@ -108,7 +169,7 @@ void PuzzlePiece::findEdgePoints()
 
 */
 
-void PuzzlePiece::seperateSubContours(vector<Point> points)
+void PuzzlePiece::seperateSubContours()
 {
 	Point A = Point(0, 0);
 	Point B = Point(0, 0);
@@ -117,22 +178,22 @@ void PuzzlePiece::seperateSubContours(vector<Point> points)
 
 	for (int i = 0; i < _contour.size(); i++)
 	{
-		if (distance(_contour[i], points[0]) < distance(A, points[0]))
+		if (distance(_contour[i], _points[0]) < distance(A, _points[0]))
 		{
 			A = _contour[i];
 		}
 
-		else if (distance(_contour[i], points[1]) < distance(B, points[1]))
+		else if (distance(_contour[i], _points[1]) < distance(B, _points[1]))
 		{
 			B = _contour[i];
 		}
 
-		else if (distance(_contour[i], points[2]) < distance(C, points[2]))
+		else if (distance(_contour[i], _points[2]) < distance(C, _points[2]))
 		{
 			C = _contour[i];
 		}
 
-		else if (distance(_contour[i], points[3]) < distance(D, points[3]))
+		else if (distance(_contour[i], _points[3]) < distance(D, _points[3]))
 		{
 			D = _contour[i];
 		}
@@ -145,40 +206,49 @@ void PuzzlePiece::seperateSubContours(vector<Point> points)
 
 	int start_stop = 0;
 	int i = _contour.size() - 1;
-	int j = 0;
 	
 	vector<Point> vec1;
 	vector<Point> vec2;
 	vector<Point> vec3;
 	vector<Point> vec4;
 
+	Point previousPoint;
 	
 	while(start_stop != 5)
 	{
 		if (_contour[i] == A || _contour[i] == B || _contour[i] == C || _contour[i] == D)
 		{
 			start_stop++;
-			j = 1;
+
+			
 		}
 
-		if (start_stop == 1)
+
+		else if (start_stop == 1)
 		{
 			vec1.push_back(_contour[i]);
+
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(0, 0, 255);
+			previousPoint = _contour[i];
+
 		}
 
-		if (start_stop == 2)
+		else if (start_stop == 2)
 		{
 			vec2.push_back(_contour[i]);
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(255, 0, 0);
 		}
 
-		if (start_stop == 3)
+		else if (start_stop == 3)
 		{
 			vec3.push_back(_contour[i]);
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(0, 255, 255);
 		}
 
-		if (start_stop == 4)
+		else if (start_stop == 4)
 		{
 			vec4.push_back(_contour[i]);
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(0, 255, 0);
 		}
 
 		
@@ -189,14 +259,17 @@ void PuzzlePiece::seperateSubContours(vector<Point> points)
 			i = _contour.size() - 1;
 		}
 	}
+	
 
 	imshow("PIC", _pic);
 	waitKey(0);
 
-	_subContours.push_back(vec1);
-	_subContours.push_back(vec2);
-	_subContours.push_back(vec3);
-	_subContours.push_back(vec4);
+	sides.push_back(Side(vec1, vec1[0], vec1[vec1.size() - 1], 0));
+	sides.push_back(Side(vec2, vec2[0], vec2[vec2.size() - 1], 1));
+	sides.push_back(Side(vec3, vec3[0], vec3[vec3.size() - 1], 2));
+	sides.push_back(Side(vec4, vec4[0], vec4[vec4.size() - 1], 3));
+
+
 	
 	
 }
@@ -220,16 +293,42 @@ double PuzzlePiece::angle(Point A, Point B, Point C) {// calculates the angle be
 
 
 double PuzzlePiece::Area(vector<Point> corners) {// calculates the area between the corners of the puzzle piece
-	//By means of "shoelace algorithm"
-	int n = corners.size(); // of corners
-	double area = 0.0;
-	for (int i = 0; i < n; i++) {
-		int j = (i + 1) % n;
-		area += corners[i].x * corners[j].y;
-		area -= corners[j].x * corners[i].y;
+	 // Create a convex hull from the corner points
+	vector<Point> hull;
+	convexHull(corners, hull);
+	// Check if the convex hull has 4 points (a quadrilateral)
+	if (hull.size() != 4) {
+		// Return -1 if the convex hull does not have 4 points
+		return -1;
 	}
-	area = abs(area) / 2.0;
+	// Calculate the area of the quadrilateral
+	double area = contourArea(hull);
 	return area;
+}
+
+
+/*
+
+	This function calculates the angle of the puzzle piece with minAreaRect and rotates the image
+	for it to be positioned streight, this is done inorder to fit the pieces together later.
+
+*/
+void PuzzlePiece::fixRotation()
+{
+	RotatedRect rect = minAreaRect(_points);
+	float angle = rect.angle;
+	if (rect.size.width < rect.size.height)
+		angle += 90.0;
+
+	cv::Point2f center = rect.center;
+	cv::Mat rot_mat = cv::getRotationMatrix2D(center, angle, 1.0);
+	cv::Mat rotated_image;
+	cv::warpAffine(_pic, rotated_image, rot_mat, _pic.size());
+
+	imshow("rotated", rotated_image);
+	waitKey(0);
+
+	_pic = rotated_image;
 }
 
 

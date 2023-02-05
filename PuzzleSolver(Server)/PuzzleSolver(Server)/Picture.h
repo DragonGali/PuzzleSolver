@@ -16,6 +16,8 @@ private:
 	Mat threshold(Mat imgin, int low, int high);
 	vector<vector<Point>> findContours(Mat grid);
 	Mat bitwise_and_255(Mat mask, int f);
+	double getAreaBetweenPoints(vector<Point> contour, Point start, Point end);
+	vector<Point> UpdateContour(PuzzlePiece piece, Point new_center);
 
 	vector<Point> neighbors(const Point& p) {
 		return {
@@ -30,8 +32,8 @@ public:
 	void CreateMask();
 	void ShowPicture(Mat image);
 	void ResizeCanvas();
-
-	
+	void findMatches();
+	void movePieces();
 
 
 };
