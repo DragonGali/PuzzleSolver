@@ -32,5 +32,8 @@
     <ClInclude Include="PuzzlePiece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Side.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
