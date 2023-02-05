@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Picture.h" />
     <ClInclude Include="PuzzlePiece.h" />
+    <ClInclude Include="Side.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

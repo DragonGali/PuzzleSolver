@@ -1,16 +1,77 @@
 #include "PuzzlePiece.h"
 
-
-PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask)
+PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask, int id)
 {
+	double threshold = 3;
+	_contour.push_back(contour[0]);
+	contour.erase(contour.begin());
+
+	while (!contour.empty()) {
+		std::vector<double> distances;
+		for (cv::Point b : contour) {
+			distances.push_back(distance(_contour.back(), b));
+		}
+		int index = std::distance(distances.begin(), std::min_element(distances.begin(), distances.end()));
+		cv::Point point = contour[index];
+		contour.erase(contour.begin() + index);
+		if (distances[index] < threshold) {
+			_contour.push_back(point);
+		}
+	}
+
+
 	_pic = pic;
 	_center = center;
-	_contour = contour;
 	_mask = mask;
+	_id = id;
+	_hasMoved = false;
 
 	findEdgePoints();
-	seperateSubContours();
-	fixRotation();
+	if (_points.size() != 0)
+	{
+		seperateSubContours();
+	}
+	//fixRotation();
+}
+
+int PuzzlePiece::getId()
+{
+	return _id;
+}
+
+Mat PuzzlePiece::getImage()
+{
+	return _pic;
+}
+
+vector<Point> PuzzlePiece::getContour()
+{
+	return _contour;
+}
+
+vector<Point> PuzzlePiece::getPoints()
+{
+	return _points;
+}
+
+Point PuzzlePiece::getCenter()
+{
+	return _center;
+}
+
+void PuzzlePiece::setContour(vector<Point> contour)
+{
+	_contour = contour;
+}
+
+bool PuzzlePiece::checkMovement()
+{
+	return _hasMoved;
+}
+
+void PuzzlePiece::Moved()
+{
+	_hasMoved = true;
 }
 
 /*
@@ -145,42 +206,49 @@ void PuzzlePiece::seperateSubContours()
 
 	int start_stop = 0;
 	int i = _contour.size() - 1;
-	int j = 0;
 	
 	vector<Point> vec1;
 	vector<Point> vec2;
 	vector<Point> vec3;
 	vector<Point> vec4;
 
+	Point previousPoint;
 	
 	while(start_stop != 5)
 	{
 		if (_contour[i] == A || _contour[i] == B || _contour[i] == C || _contour[i] == D)
 		{
 			start_stop++;
-			j = 1;
+
+			
 		}
 
-		if (start_stop == 1)
+
+		else if (start_stop == 1)
 		{
 			vec1.push_back(_contour[i]);
+
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(0, 0, 255);
+			previousPoint = _contour[i];
+
 		}
 
-		if (start_stop == 2)
+		else if (start_stop == 2)
 		{
-
 			vec2.push_back(_contour[i]);
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(255, 0, 0);
 		}
 
-		if (start_stop == 3)
+		else if (start_stop == 3)
 		{
-
 			vec3.push_back(_contour[i]);
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(0, 255, 255);
 		}
 
-		if (start_stop == 4)
+		else if (start_stop == 4)
 		{
 			vec4.push_back(_contour[i]);
+			_pic.at<Vec3b>(_contour[i]) = Vec3b(0, 255, 0);
 		}
 
 		
@@ -191,14 +259,17 @@ void PuzzlePiece::seperateSubContours()
 			i = _contour.size() - 1;
 		}
 	}
+	
 
 	imshow("PIC", _pic);
 	waitKey(0);
 
-	_subContours.push_back(vec1);
-	_subContours.push_back(vec2);
-	_subContours.push_back(vec3);
-	_subContours.push_back(vec4);
+	sides.push_back(Side(vec1, vec1[0], vec1[vec1.size() - 1], 0));
+	sides.push_back(Side(vec2, vec2[0], vec2[vec2.size() - 1], 1));
+	sides.push_back(Side(vec3, vec3[0], vec3[vec3.size() - 1], 2));
+	sides.push_back(Side(vec4, vec4[0], vec4[vec4.size() - 1], 3));
+
+
 	
 	
 }
