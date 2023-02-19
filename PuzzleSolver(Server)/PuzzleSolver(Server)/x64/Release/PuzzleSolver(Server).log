@@ -1,7 +1,40 @@
-﻿  PuzzleSolver(Server).cpp
+﻿  Picture.cpp
 C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.h(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(112,48): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=uchar
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(117,50): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(298,37): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+          and
+          [
+              _Tp=int
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(298,28): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+          and
+          [
+              _Tp=int
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(387,33): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=uchar
+          ]
   Generating code
-  3 of 1055 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+  1 of 1145 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

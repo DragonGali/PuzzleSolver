@@ -7,19 +7,22 @@ Picture::Picture(string link)
 	ShowPicture(_image);
 	CreateMask();
 
+
 	Mat Image = Mat(_image.size(), _image.type());
 
 	findMatches();
 
 	vector<vector<Point>> temp;
-	temp.push_back(_pieces[0].sides[0]._contour);
-	temp.push_back(_pieces[1].sides[2]._contour);
+	auto pos = _pieces[0].sides[1].matchId.find("_");
+	int match = stoi(_pieces[0].sides[1].matchId.substr(0, pos));
+	int side = stoi(_pieces[0].sides[1].matchId.substr(0, pos + 1));
+
+	temp.push_back(_pieces[0].sides[1]._contour);
+	temp.push_back(_pieces[match].sides[side]._contour);
 
 	drawContours(Image, temp, -1, Scalar(255, 255, 255), 2);
 	movePieces();
 
-	imshow("Image", Image);
-	waitKey(0);
 	
 
 }
@@ -27,8 +30,7 @@ Picture::Picture(string link)
 
 void Picture::ShowPicture(Mat image) // Function for chwecking how the image looks.
 {
-	imshow("image", image);
-	waitKey(0);
+
 }
 
 /*
@@ -254,12 +256,13 @@ Mat Picture::EdgeDetection()
 	Mat grayscale = CreateGrayScale();
 	ShowPicture(_image);
 
+	//GaussianBlur(grayscale, grayscale, Size(5, 5), 0);
+
 	Mat sFiltered = Mat(sobelFilter(grayscale)); //Sobel Filter
 
-	Mat non = Mat(applyNonMaxSupression(sFiltered));//Non-Maxima Suppression
-	Mat final = Mat(threshold(non, 20, 40)); //Double Threshold and Finalize
+	Mat final;
+	cv::threshold(sFiltered, final, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
-	ShowPicture(sFiltered);
 
 	ShowPicture(final);
 
@@ -276,9 +279,6 @@ Mat Picture::EdgeDetection()
 void Picture::CreateMask()
 {
 	Mat edgeDetection = EdgeDetection();
-
-	int mode = CV_RETR_EXTERNAL;
-	int method = CV_CHAIN_APPROX_SIMPLE;
 
 	vector<vector<Point>> BoundaryPoints = findContours(edgeDetection);
 	vector<vector<Point>> temp;
@@ -305,7 +305,10 @@ void Picture::CreateMask()
 
 		vector<vector<Point>> contour = findContours(contourMat);
 
-
+		if (contour.size() == 0)
+		{
+			continue;
+		}
 
 		_pieces.push_back(PuzzlePiece(contour[0], Center, Piece, mask, i));
 	}
@@ -395,6 +398,7 @@ Mat Picture::CreateGrayScale()
 */
 vector<vector<Point>> Picture::findContours(Mat grid)
 {
+
 
 	// Keep track of the visited pixels to avoid processing them multiple times.
 	vector<vector<bool>> visited(grid.rows, vector<bool>(grid.cols));
@@ -497,189 +501,185 @@ vector<Point> Picture::UpdateContour(PuzzlePiece piece, Point new_center)
 
 }
 
+void Picture::makeTransparent(Mat image)
+{
+	image.create(image.size(), CV_8UC4);
+
+	for (int y = 0; y < image.rows; ++y)
+		for (int x = 0; x < image.cols; ++x)
+		{
+			cv::Vec4b& pixel = image.at<cv::Vec4b>(y, x);
+			// if pixel is black
+			if (pixel[0] == 0 && pixel[1] == 0 && pixel[2] == 0)
+			{
+				// set alpha to zero:
+				pixel[3] = 0;
+				cout << image.at<cv::Vec4b>(y, x)[3];
+			}
+		}
+}
+
 void Picture::movePieces()
 {
 
 	Mat dst = Mat(_image.size() * 2, _image.type());
 	Mat img1 = _pieces[0].getImage();
-	cv::Rect bb1 = cv::boundingRect(_pieces[0].getContour());
-	cv::Mat src1 = img1(bb1);
+
+	cv::Rect bb1 = cv::boundingRect(_pieces[0].getPoints());
+	cv::Mat src1 = img1;
 
 	_pieces[0].Moved();
 
-	src1(cv::Rect(0, 0, src1.cols, src1.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2, src1.cols, src1.rows)));
+	cv::Mat src1_masked;
+	src1(cv::Rect(0, 0, src1.cols, src1.rows)).copyTo(src1_masked, _pieces[0]._mask(cv::Rect(0, 0, src1.cols, src1.rows)));
+	src1_masked(cv::Rect(0, 0, src1_masked.cols, src1_masked.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2, src1_masked.cols, src1_masked.rows)));
 
-	int rights = 1;
-	int lefts = 1;
+	int rights = 0;
+	int lefts = 0;
 	int ups = 0;
 	int downs = 0;
+
 
 
 	for (int i = 0; i < _pieces.size() / 2; i++)
 	{
 		img1 = _pieces[i].getImage();
 		bb1 = cv::boundingRect(_pieces[i].getContour());
-		src1 = img1(bb1);
+
+
+		Point img1Cords = Point(dst.cols / 2, dst.rows / 2);
 
 		// left
-		if (_pieces[i].sides[0].matchId != "")
+		if (_pieces[i].sides[0].flat != true)
 		{
 
 			auto pos = _pieces[i].sides[0].matchId.find("_");
 			int match = stoi(_pieces[i].sides[0].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() == true)
+			if (_pieces[match].checkMovement() != true)
 			{
-				continue;
+				Mat img2 = _pieces[match].getImage();
+				//makeTransparent(img2);
+
+				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
+				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
+				cv::Mat src2 = img2;
+
+				lefts++;
+
+				cv::Mat src2_masked;
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(src2_masked, _pieces[match]._mask(cv::Rect(0, 0, src2.cols, src2.rows)));
+				src2_masked(cv::Rect(0, 0, src2_masked.cols, src2_masked.rows)).copyTo(dst(cv::Rect(img1Cords.x - lefts * max(bb1.width, bb2.width), img1Cords.y, src2_masked.cols, src2_masked.rows)));
+				img1Cords = Point(img1Cords.x - lefts * max(bb1.width, bb2.width), img1Cords.y);
+
+				_pieces[match].Moved();
+
 			}
-
-			Mat img2 = _pieces[match].getImage();
-
-			cv::Rect bb2 = cv::boundingRect(_pieces[match].getContour());
-			cv::Mat src2 = img2(bb2);
-
-			for (int n = 0; n < side + 1; n++)
-			{
-				transpose(src2, src2);
-				flip(src2, src2, 1);
-
-				cv::imshow("src2", src2);
-				cv::waitKey();
-			}
-
-
-			lefts++;
-
-			src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(dst.cols / 2 - rights * bb2.width, dst.rows / 2, src2.cols, src2.rows)));
-
-			_pieces[match].Moved();
-
-			cv::imshow("Result", dst);
-			cv::waitKey();
 		}
 
 		//down
-		if (_pieces[i].sides[1].matchId != "")
+		if (_pieces[i].sides[1].flat != true)
 		{
 
 			auto pos = _pieces[i].sides[1].matchId.find("_");
 			int match = stoi(_pieces[i].sides[1].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() == true)
+			if (_pieces[match].checkMovement() != true)
 			{
-				continue;
+
+
+				Mat img2 = _pieces[match].getImage();
+				makeTransparent(img2);
+
+				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
+				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
+				cv::Mat src2 = img2(temp);
+
+				downs++;
+
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x, img1Cords.y + (downs * max(bb1.height, bb2.height)), src2.cols, src2.rows)));
+				img1Cords = Point(img1Cords.x, img1Cords.y + (downs * max(bb1.height, bb2.height)));
+
+				_pieces[match].Moved();
 			}
-
-			Mat img2 = _pieces[match].getImage();
-
-			cv::Rect bb2 = cv::boundingRect(_pieces[match].getContour());
-			cv::Mat src2 = img2(bb2);
-
-			for (int n = 0; n < side; n++)
-			{
-				transpose(src2, src2);
-				flip(src2, src2, 1);
-			}
-
-			downs++;
-
-			src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2 + (downs * bb2.height) , src2.cols, src2.rows)));
-
-			_pieces[match].Moved();
-
-			cv::imshow("Result", dst);
-			cv::waitKey();
 
 
 		}
 
 		//right
-		if (_pieces[i].sides[2].matchId != "")
+		if (_pieces[i].sides[2].flat != true)
 		{
 
-			 
+
 			auto pos = _pieces[i].sides[2].matchId.find("_");
 			int match = stoi(_pieces[i].sides[2].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() == true)
+			if (_pieces[match].checkMovement() != true)
 			{
-				continue;
+
+
+				Mat img2 = _pieces[match].getImage();
+				makeTransparent(img2);
+
+				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
+				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
+				cv::Mat src2 = img2(temp);
+
+				rights++;
+
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x + rights * max(bb1.width, bb2.width), img1Cords.y, src2.cols, src2.rows)));
+				img1Cords = Point(img1Cords.x + rights * max(bb1.width, bb2.width), img1Cords.y);
+
+				_pieces[match].Moved();
+
 			}
-
-
-			Mat img2 = _pieces[match].getImage();
-
-			cv::Rect bb2 = cv::boundingRect(_pieces[match].getContour());
-			cv::Mat src2 = img2(bb2);
-
-			cout << side << " ";
-
-			for (int n = 0; n < side; n++)
-			{
-				transpose(src2, src2);
-				flip(src2, src2, 1);
-			}
-
-			rights++;
-
-			src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(dst.cols / 2 - lefts * bb2.width, dst.rows / 2, src2.cols, src2.rows)));
-
-			_pieces[match].Moved();
-
-			cv::imshow("Result", dst);
-			cv::waitKey();
 
 
 		}
 
 		//up
-		if (_pieces[i].sides[3].matchId != "")
+		if (_pieces[i].sides[3].flat != true)
 		{
 
 			auto pos = _pieces[i].sides[3].matchId.find("_");
 			int match = stoi(_pieces[i].sides[3].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() == true)
+			if (_pieces[match].checkMovement() != true)
 			{
-				continue;
+
+				Mat img2 = _pieces[match].getImage();
+				makeTransparent(img2);
+
+
+				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
+				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
+				cv::Mat src2 = img2(temp);
+
+				ups++;
+
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x, img1Cords.y - ups * max(bb1.height, bb2.height), src2.cols, src2.rows)));
+				img1Cords = Point(img1Cords.x, img1Cords.y - ups * max(bb1.height, bb2.height));
+
+				_pieces[match].Moved();
+
+
 			}
-
-			Mat img2 = _pieces[match].getImage();
-
-
-			cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
-			cv::Mat src2 = img2(bb2);
-
-			for (int n = 0; n < side; n++)
-			{
-				transpose(src2, src2);
-				flip(src2, src2, 1);
-			}
-
-			ups++;
-
-			src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2 - ups * bb2.height, src2.cols, src2.rows)));
-
-			_pieces[match].Moved();
-
-			cv::imshow("Result", dst);
-			cv::waitKey();
-
-
 		}
-
-
 	}
+
+	imwrite("C:/Users/magshimim/Desktop/PuzzleSolver/puzzle-maker/Result.jpg", dst);
+	
 }
 
 
 
 
-double Picture::getAreaBetweenPoints(vector<Point> contour, Point start, Point end) {
+double Picture::getAreaBetweenPoints(vector<Point> contour, Point start, Point end) 
+{
 	int index_start = -1, index_end = -1;
 	double area = 0;
 	for (int i = 0; i < contour.size(); i++) {
@@ -725,41 +725,57 @@ void Picture::findMatches()
 					if (j == i)
 					{
 						j++;
+					}
 
-						if (j == _pieces.size())
+					if (j < _pieces.size())
+					{
+						double side2Area = getAreaBetweenPoints(_pieces[j].sides[l]._contour, _pieces[j].sides[l].A, _pieces[j].sides[l].B);
+
+						if (abs(side1Area - side2Area) == 0)
 						{
 							continue;
 						}
-					}
 
-					double side2Area = getAreaBetweenPoints(_pieces[i].sides[l]._contour, _pieces[i].sides[l].A, _pieces[i].sides[l].B);
+						if (side1Area <= 0)
+						{
+							_pieces[i].sides[k].flat = true;
+						}
 
-					if (abs(side1Area - side2Area) == 0)
-					{
-						continue;
-					}
-
-
-					else if (minSimilarity == 0)
-					{
-						minSimilarity = abs(side1Area - side2Area);
-
-						_pieces[i].sides[k].matchId = to_string(_pieces[j].getId()) + "_" + to_string(_pieces[j].sides[l]._id);
-						_pieces[j].sides[l].matchId = to_string(_pieces[i].getId()) + "_" + to_string(_pieces[i].sides[k]._id);
-					}
+						if (side2Area <= 0)
+						{
+							_pieces[j].sides[l].flat = true;
+						}
 
 
-					else if (abs(side1Area - side2Area) < minSimilarity && abs(side1Area - side2Area) >= 0) {
-						minSimilarity = abs(side1Area - side2Area);
-						_pieces[i].sides[k].matchId = to_string(_pieces[j].getId()) + "_" + to_string(_pieces[j].sides[l]._id);
-						_pieces[j].sides[l].matchId = to_string(_pieces[i].getId()) + "_" + to_string(_pieces[i].sides[k]._id);
+
+						if (abs(side1Area - side2Area) < minSimilarity) {
+							minSimilarity = abs(side1Area - side2Area);
+
+							_pieces[i].sides[k].matchId = to_string(_pieces[j].getId()) + "_" + to_string(_pieces[j].sides[l]._id);
+							_pieces[j].sides[l].matchId = to_string(_pieces[i].getId()) + "_" + to_string(_pieces[i].sides[k]._id);
+						}
+
+						else if (minSimilarity == 0)
+						{
+							minSimilarity = abs(side1Area - side2Area);
+							_pieces[i].sides[k].matchId = to_string(_pieces[j].getId()) + "_" + to_string(_pieces[j].sides[l]._id);
+							_pieces[j].sides[l].matchId = to_string(_pieces[i].getId()) + "_" + to_string(_pieces[i].sides[k]._id);
+
+						}
 					}
 				}
+				
+
+
 
 			}
 
+				
 
 		}
+
+
+		
 	}
 
 }

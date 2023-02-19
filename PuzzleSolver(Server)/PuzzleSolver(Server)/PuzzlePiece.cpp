@@ -116,7 +116,6 @@ void PuzzlePiece::findEdgePoints()
 	img2 = binary_channel;
 	Mat image;
 
-
 	int target = 90; //deg
 	int delta = 5; //deg
 	vector<Point> bestpoints;
@@ -145,9 +144,11 @@ void PuzzlePiece::findEdgePoints()
 					}
 
 
-					if ((Area(points) >= maxArea) && deg90_counter == 2) {
+					if ((Area(points) >= maxArea) && deg90_counter >= 2) {
 						maxArea = Area(points);
 						maxPoints = points;
+
+
 					}
 
 				}
@@ -259,10 +260,6 @@ void PuzzlePiece::seperateSubContours()
 			i = _contour.size() - 1;
 		}
 	}
-	
-
-	imshow("PIC", _pic);
-	waitKey(0);
 
 	sides.push_back(Side(vec1, vec1[0], vec1[vec1.size() - 1], 0));
 	sides.push_back(Side(vec2, vec2[0], vec2[vec2.size() - 1], 1));
@@ -324,9 +321,6 @@ void PuzzlePiece::fixRotation()
 	cv::Mat rot_mat = cv::getRotationMatrix2D(center, angle, 1.0);
 	cv::Mat rotated_image;
 	cv::warpAffine(_pic, rotated_image, rot_mat, _pic.size());
-
-	imshow("rotated", rotated_image);
-	waitKey(0);
 
 	_pic = rotated_image;
 }

@@ -33,6 +33,7 @@ class Side
 			_contour = contour;
 			A = a;
 			B = b;
+			flat = false;
 
 			_id = num;
 		}
@@ -44,4 +45,5 @@ class Side
 		
 		int _id;
 		string matchId;
+		bool flat;
 };
