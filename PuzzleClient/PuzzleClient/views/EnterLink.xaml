@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="PuzzleClient.views.EnterLink"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PuzzleClient.views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="0,0,-2,-0.4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="387*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="Link" FontSize="20" HorizontalAlignment="Left" Margin="141,262,0,0" VerticalAlignment="Top" Height="34" Width="565" FontFamily="Kristen ITC"/>
+        <TextBlock FontSize="36" FontFamily="Kristen ITC" HorizontalAlignment="Left" Margin="86,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="694" Height="101" Text="Enter the link to the image in your PC: " Grid.ColumnSpan="2"/>
+        <Button Content="Preceed" HorizontalAlignment="Left" Margin="342,328,0,0" VerticalAlignment="Top" Width="150" Height="57" FontSize="36" FontFamily="Kristen ITC" x:Name="Butt" Click="LinkEntered"/>
+        <TextBlock HorizontalAlignment="Left" Height="47" Margin="22,414,0,-11" TextWrapping="Wrap" VerticalAlignment="Top" Width="294" FontFamily="Kristen ITC" FontSize="18" Text="THE LINK WAS INVALID" Foreground="#FFEB2F2F"  x:Name="Warning" Visibility="Hidden"/>
+    </Grid>
+</UserControl>
