@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using PuzzleClient.viewModels;
 
 using System.IO;
+using System.Diagnostics;
 
 namespace PuzzleClient.views
 {
@@ -42,11 +43,6 @@ namespace PuzzleClient.views
             if (Link.Text != "" && IsValidUrl(Link.Text))
             {
                 Application.Current.MainWindow.DataContext = new ImageViewModel();
-
-                using (StreamWriter writer = new StreamWriter("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\ClientLink.text"))
-                {
-                    writer.Write(Link.Text);
-                }
             }
 
             else

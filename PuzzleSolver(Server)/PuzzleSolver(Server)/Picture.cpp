@@ -13,14 +13,17 @@ Picture::Picture(string link)
 	findMatches();
 
 	vector<vector<Point>> temp;
-	auto pos = _pieces[0].sides[1].matchId.find("_");
-	int match = stoi(_pieces[0].sides[1].matchId.substr(0, pos));
-	int side = stoi(_pieces[0].sides[1].matchId.substr(0, pos + 1));
+	auto pos = _pieces[1].sides[0].matchId.find("_");
+	int match = stoi(_pieces[1].sides[0].matchId.substr(0, pos));
+	int side = stoi(_pieces[1].sides[0].matchId.substr(0, pos + 1));
 
-	temp.push_back(_pieces[0].sides[1]._contour);
+	temp.push_back(_pieces[1].sides[0]._contour);
 	temp.push_back(_pieces[match].sides[side]._contour);
 
 	drawContours(Image, temp, -1, Scalar(255, 255, 255), 2);
+
+	ShowPicture(Image);
+
 	movePieces();
 
 	
@@ -30,7 +33,8 @@ Picture::Picture(string link)
 
 void Picture::ShowPicture(Mat image) // Function for chwecking how the image looks.
 {
-
+	imshow("image", image);
+	waitKey(0);
 }
 
 /*
@@ -256,17 +260,14 @@ Mat Picture::EdgeDetection()
 	Mat grayscale = CreateGrayScale();
 	ShowPicture(_image);
 
-	//GaussianBlur(grayscale, grayscale, Size(5, 5), 0);
+	GaussianBlur(grayscale, grayscale, cv::Size(3, 3), 0);
 
-	Mat sFiltered = Mat(sobelFilter(grayscale)); //Sobel Filter
+	Mat sFiltered;
+	Canny(grayscale, sFiltered, 50, 150, 3, true);
 
-	Mat final;
-	cv::threshold(sFiltered, final, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	ShowPicture(sFiltered);
 
-
-	ShowPicture(final);
-
-	Mat edges = Mat(final);
+	Mat edges = Mat(sFiltered);
 	return edges;
 
 
@@ -280,15 +281,23 @@ void Picture::CreateMask()
 {
 	Mat edgeDetection = EdgeDetection();
 
-	vector<vector<Point>> BoundaryPoints = findContours(edgeDetection);
+	vector<vector<Point>> BoundaryPoints;
+	cv::findContours(edgeDetection, BoundaryPoints, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
 	vector<vector<Point>> temp;
 	Mat mask = Mat(edgeDetection.size(), edgeDetection.type());
 
 	for (int i = 0; i < BoundaryPoints.size(); i++) {
+
+		if (BoundaryPoints[i].size() < _image.size().height / 5)
+		{
+			continue;
+		}
+
 		mask = 0;
 		vector<vector<Point>> temp;
 		temp.push_back(BoundaryPoints[i]);
-		fillPoly(mask, temp, Scalar(255, 255, 255));
+		drawContours(mask, temp, -1, Scalar(255, 255, 255), 1);
 		Scalar Mean = mean(temp[0]);
 		Point Center(Point(Mean[0], Mean[1]));
 
@@ -303,6 +312,9 @@ void Picture::CreateMask()
 		Mat contourMat = Mat(mask.size(), mask.type());
 		Canny(mask, contourMat, 50, 150, 3, true);
 
+		ShowPicture(mask);
+
+
 		vector<vector<Point>> contour = findContours(contourMat);
 
 		if (contour.size() == 0)
@@ -310,8 +322,13 @@ void Picture::CreateMask()
 			continue;
 		}
 
-		_pieces.push_back(PuzzlePiece(contour[0], Center, Piece, mask, i));
-	}
+		PuzzlePiece piece(contour[0], Center, Piece, mask, i);
+
+		if (piece.getPoints().size() == 4)
+		{
+ 			_pieces.push_back(piece);
+		}
+ 	}
 
 
 }
@@ -334,8 +351,6 @@ Mat Picture::bitwise_and_255(Mat mask, int f)
 	{
 		for (int j = 0; j < mask.cols; j++)
 		{
-
-
 
 			if (mask.at<uchar>(i, j) == 255)
 			{
@@ -458,7 +473,7 @@ vector<vector<Point>> Picture::findContours(Mat grid)
 			}
 			PuzzlePiece p;
 
-			if (p.distance(contour.front(), contour.back()) <= 5 && contour.size() > 100)// getting rid of bad contours
+			if (contour.size() > 100)// getting rid of bad contours
 			{
 
 				// Add the filled contour to the output.
@@ -487,18 +502,20 @@ cv::Rect getBoundingBox(cv::Mat image) {
 	return cv::Rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
-vector<Point> Picture::UpdateContour(PuzzlePiece piece, Point new_center)
+PuzzlePiece Picture::UpdateContour(PuzzlePiece piece, Point new_center)
 {
 	Point shift = new_center - piece.getCenter();
-	vector<Point> contour = piece.getContour();
+	vector<Point> points = piece.getPoints();
 
-	for (int i = 0; i < contour.size(); i++)
+	for (int i = 0; i < points.size(); i++)
 	{
-		contour[i] += shift;
+		points[i] += shift;
 	}
+	
+	piece.setPoints(points);
+	piece.setCenter(new_center);
 
-	return contour;
-
+	return piece;
 }
 
 void Picture::makeTransparent(Mat image)
@@ -525,26 +542,24 @@ void Picture::movePieces()
 	Mat dst = Mat(_image.size() * 2, _image.type());
 	Mat img1 = _pieces[0].getImage();
 
-	cv::Rect bb1 = cv::boundingRect(_pieces[0].getPoints());
-	cv::Mat src1 = img1;
+	cv::Rect bb1 = cv::boundingRect(_pieces[0].getContour());
+	cv::Mat src1 = img1(bb1);
+
+	ShowPicture(src1);
+
+	src1(Rect(0, 0, src1.cols, src1.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2, src1.cols, src1.rows)));
 
 	_pieces[0].Moved();
 
-	cv::Mat src1_masked;
-	src1(cv::Rect(0, 0, src1.cols, src1.rows)).copyTo(src1_masked, _pieces[0]._mask(cv::Rect(0, 0, src1.cols, src1.rows)));
-	src1_masked(cv::Rect(0, 0, src1_masked.cols, src1_masked.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2, src1_masked.cols, src1_masked.rows)));
 
-	int rights = 0;
-	int lefts = 0;
-	int ups = 0;
-	int downs = 0;
-
-
-
-	for (int i = 0; i < _pieces.size() / 2; i++)
+	for (int i = 0; i < _pieces.size(); i++)
 	{
+		imshow("dst", dst);
+		waitKey(0);
+
 		img1 = _pieces[i].getImage();
-		bb1 = cv::boundingRect(_pieces[i].getContour());
+		bb1 = cv::boundingRect(_pieces[i].getPoints());
+		cv::Rect img1temp = cv::boundingRect(_pieces[i].getContour());
 
 
 		Point img1Cords = Point(dst.cols / 2, dst.rows / 2);
@@ -553,25 +568,23 @@ void Picture::movePieces()
 		if (_pieces[i].sides[0].flat != true)
 		{
 
-			auto pos = _pieces[i].sides[0].matchId.find("_");
+ 			auto pos = _pieces[i].sides[0].matchId.find("_");
 			int match = stoi(_pieces[i].sides[0].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
 			if (_pieces[match].checkMovement() != true)
 			{
 				Mat img2 = _pieces[match].getImage();
-				//makeTransparent(img2);
 
 				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
 				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
-				cv::Mat src2 = img2;
+				cv::Mat src2 = img2(temp);
 
-				lefts++;
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x - bb1.width + (bb1.x - img1temp.x) - (bb2.x - temp.x), img1Cords.y + (temp.y - bb2.y), src2.cols, src2.rows)));
 
-				cv::Mat src2_masked;
-				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(src2_masked, _pieces[match]._mask(cv::Rect(0, 0, src2.cols, src2.rows)));
-				src2_masked(cv::Rect(0, 0, src2_masked.cols, src2_masked.rows)).copyTo(dst(cv::Rect(img1Cords.x - lefts * max(bb1.width, bb2.width), img1Cords.y, src2_masked.cols, src2_masked.rows)));
-				img1Cords = Point(img1Cords.x - lefts * max(bb1.width, bb2.width), img1Cords.y);
+				img1Cords = Point(img1Cords.x - bb1.width + (bb1.x - img1temp.x) - (bb2.x - temp.x), img1Cords.y + (temp.y - bb2.y));
+
+				ShowPicture(src2);
 
 				_pieces[match].Moved();
 
@@ -591,16 +604,14 @@ void Picture::movePieces()
 
 
 				Mat img2 = _pieces[match].getImage();
-				makeTransparent(img2);
 
 				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
 				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
 				cv::Mat src2 = img2(temp);
 
-				downs++;
 
-				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x, img1Cords.y + (downs * max(bb1.height, bb2.height)), src2.cols, src2.rows)));
-				img1Cords = Point(img1Cords.x, img1Cords.y + (downs * max(bb1.height, bb2.height)));
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(bb1.x, img1Cords.y  + bb1.height + (temp.height - bb2.height), src2.cols, src2.rows)));
+				img1Cords = Point(img1Cords.x + (img1temp.x - bb1.x), img1Cords.y + img1temp.height + (temp.y - bb2.y));
 
 				_pieces[match].Moved();
 			}
@@ -617,21 +628,19 @@ void Picture::movePieces()
 			int match = stoi(_pieces[i].sides[2].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() != true)
+			if (_pieces[match].checkMovement() != true) 
 			{
 
 
 				Mat img2 = _pieces[match].getImage();
-				makeTransparent(img2);
 
 				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
 				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
 				cv::Mat src2 = img2(temp);
 
-				rights++;
 
-				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x + rights * max(bb1.width, bb2.width), img1Cords.y, src2.cols, src2.rows)));
-				img1Cords = Point(img1Cords.x + rights * max(bb1.width, bb2.width), img1Cords.y);
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x + (img1temp.width - bb1.width) + bb1.width, img1Cords.y  + (temp.height - bb2.height), src2.cols, src2.rows)));
+				img1Cords = Point(img1Cords.x + (img1temp.width - bb1.width) + bb1.width, img1Cords.y + (temp.height - bb2.height));
 
 				_pieces[match].Moved();
 
@@ -652,17 +661,14 @@ void Picture::movePieces()
 			{
 
 				Mat img2 = _pieces[match].getImage();
-				makeTransparent(img2);
 
 
 				cv::Rect bb2 = cv::boundingRect(_pieces[match].getPoints());
 				cv::Rect temp = cv::boundingRect(_pieces[match].getContour());
 				cv::Mat src2 = img2(temp);
 
-				ups++;
-
-				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x, img1Cords.y - ups * max(bb1.height, bb2.height), src2.cols, src2.rows)));
-				img1Cords = Point(img1Cords.x, img1Cords.y - ups * max(bb1.height, bb2.height));
+				src2(cv::Rect(0, 0, src2.cols, src2.rows)).copyTo(dst(cv::Rect(img1Cords.x + (img1temp.x - bb1.x), img1Cords.y - img1temp.height + (temp.y - bb2.y), src2.cols, src2.rows)));
+				img1Cords = Point(img1Cords.x + (img1temp.x - bb1.x), img1Cords.y - img1temp.height + (temp.y - bb2.y));
 
 				_pieces[match].Moved();
 
@@ -671,7 +677,8 @@ void Picture::movePieces()
 		}
 	}
 
-	imwrite("C:/Users/magshimim/Desktop/PuzzleSolver/puzzle-maker/Result.jpg", dst);
+	imwrite("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\Result.jpg", dst);
+
 	
 }
 
@@ -744,12 +751,16 @@ void Picture::findMatches()
 						if (side2Area <= 0)
 						{
 							_pieces[j].sides[l].flat = true;
+							
 						}
 
 
 
 						if (abs(side1Area - side2Area) < minSimilarity) {
 							minSimilarity = abs(side1Area - side2Area);
+
+							cout << "i : " << i << " " << k << "\n";
+							cout << "j : " << j << " " << l << "\n";
 
 							_pieces[i].sides[k].matchId = to_string(_pieces[j].getId()) + "_" + to_string(_pieces[j].sides[l]._id);
 							_pieces[j].sides[l].matchId = to_string(_pieces[i].getId()) + "_" + to_string(_pieces[i].sides[k]._id);

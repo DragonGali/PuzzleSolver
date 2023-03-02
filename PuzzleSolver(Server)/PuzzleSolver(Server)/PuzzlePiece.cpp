@@ -74,6 +74,16 @@ void PuzzlePiece::Moved()
 	_hasMoved = true;
 }
 
+void PuzzlePiece::setPoints(vector<Point> points)
+{
+	_points = points;
+}
+
+void PuzzlePiece::setCenter(Point center)
+{
+	_center = center;
+}
+
 /*
 
 	This function uses opencv functio s in order to find the points on the mask that have the most
@@ -86,7 +96,7 @@ void PuzzlePiece::findEdgePoints()
 {
 	Mat dst = Mat(_mask.size(), _mask.type());
 
-	cornerHarris(_mask, dst, 20, 31, 0.04);
+ 	cornerHarris(_mask, dst, 20, 31, 0.04);
 	dilate(dst, dst, Mat());
 	dst.mul(_mask);
 	cv::Mat data = dst.clone();
@@ -117,7 +127,7 @@ void PuzzlePiece::findEdgePoints()
 	Mat image;
 
 	int target = 90; //deg
-	int delta = 5; //deg
+	int delta = 7; //deg
 	vector<Point> bestpoints;
 	vector<Point> maxPoints;
 
@@ -260,6 +270,8 @@ void PuzzlePiece::seperateSubContours()
 			i = _contour.size() - 1;
 		}
 	}
+
+	imshow("picture", _pic);
 
 	sides.push_back(Side(vec1, vec1[0], vec1[vec1.size() - 1], 0));
 	sides.push_back(Side(vec2, vec2[0], vec2[vec2.size() - 1], 1));

@@ -32,6 +32,8 @@ public:
 	void Moved();
 
 	void setContour(vector<Point> contour);
+	void setPoints(vector<Point> points);
+	void setCenter(Point center);
 
 	vector<Side> sides;
 
