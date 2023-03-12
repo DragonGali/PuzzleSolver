@@ -23,24 +23,14 @@ namespace PuzzleClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string link;
+        public bool kirby = false;
+        public bool senku = false;
+        public bool nanachi = false;
+        public bool dor = false;
         public MainWindow()
         {
             InitializeComponent();
-            mediaElement.MediaEnded += MediaElement_MediaEnded;
-            link = "";
-        }
-        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            mediaElement.Position = TimeSpan.Zero; // reset position to start
-            mediaElement.Play(); // play again
-        }
-
-        private void Entered(object sender, RoutedEventArgs e)
-        {
-            Butt.Visibility = Visibility.Hidden;
-            DataContext = new MenuViewModel();
-            
+            DataContext = new Title();
         }
     }
 }

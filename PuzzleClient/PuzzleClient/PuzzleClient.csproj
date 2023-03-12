@@ -55,17 +55,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="viewModels\CreditsViewModel.cs" />
     <Compile Include="viewModels\EnterLinkViewModel.cs" />
+    <Compile Include="viewModels\HelpViewModel.cs" />
     <Compile Include="viewModels\ImageViewModel.cs" />
     <Compile Include="viewModels\MenuViewModel.cs" />
+    <Compile Include="viewModels\TitleViewModel.cs" />
+    <Compile Include="views\Credits.xaml.cs">
+      <DependentUpon>Credits.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\EnterLink.xaml.cs">
       <DependentUpon>EnterLink.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\Help.xaml.cs">
+      <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\Image.xaml.cs">
       <DependentUpon>Image.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\Title.xaml.cs">
+      <DependentUpon>Title.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -79,7 +91,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="views\Credits.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="views\EnterLink.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\Help.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -88,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\Menu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\Title.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -128,6 +152,42 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Result.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\vecteezy_binary-code-background-abstract-technology-digital-binary_4525039.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\gali-anim1.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\confetti.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trivia beckground%28better%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\gali teaches.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trivia-back-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trivia-back-2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\gali funny.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\6d50b575eda54007a0b8d68bdde0612a.webm" />
+    <Resource Include="Resources\DOR.png" />
+    <Resource Include="Resources\file icon.png" />
+    <Resource Include="Resources\nanachi.png" />
+    <Resource Include="Resources\chibi senku.png" />
+    <Resource Include="Resources\kirby.png" />
+    <Resource Include="Resources\pngegg.png" />
+    <Resource Include="Resources\pixel stuff.png" />
+    <Resource Include="Resources\Product.png" />
+    <Resource Include="Resources\cool background.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,16 +5,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PuzzleClient.views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="580" d:DesignWidth="800">
     <Grid Margin="0,0,-2,-0.4">
+        <Grid.Background>
+            <ImageBrush Viewport="0,0,800,580" ViewportUnits="Absolute" ImageSource="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\cool background.jpg"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="387*"/>
-            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="398*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="Link" FontSize="20" HorizontalAlignment="Left" Margin="141,262,0,0" VerticalAlignment="Top" Height="34" Width="565" FontFamily="Kristen ITC"/>
-        <TextBlock FontSize="36" FontFamily="Kristen ITC" HorizontalAlignment="Left" Margin="86,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="694" Height="101" Text="Enter the link to the image in your PC: " Grid.ColumnSpan="2"/>
-        <Button Content="Preceed" HorizontalAlignment="Left" Margin="342,328,0,0" VerticalAlignment="Top" Width="150" Height="57" FontSize="36" FontFamily="Kristen ITC" x:Name="Butt" Click="LinkEntered"/>
+        <Border Background="White" BorderThickness="1" HorizontalAlignment="Left" Height="34" Margin="685,303,0,0" VerticalAlignment="Top" Width="42">
+            <TextBlock TextWrapping="Wrap" Text="TextBlock" Margin="0.2,261.2,0.4,0"/>
+        </Border>
+        <TextBox x:Name="Link" FontSize="20" HorizontalAlignment="Left" Margin="112,303,0,0" VerticalAlignment="Top" Height="34" Width="565" FontFamily="Kristen ITC"/>
+        <TextBlock FontSize="36" FontFamily="Kristen ITC" HorizontalAlignment="Left" Margin="57,176,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="694" Height="101" Text="Enter the link to the image in your PC: " Foreground="White"/>
+        <Button Content="Proceed" HorizontalAlignment="Left" Margin="328,369,0,0" VerticalAlignment="Top" Width="150" Height="57" FontSize="36" FontFamily="Kristen ITC" x:Name="Butt" Click="LinkEntered" Background="White"/>
         <TextBlock HorizontalAlignment="Left" Height="47" Margin="22,414,0,-11" TextWrapping="Wrap" VerticalAlignment="Top" Width="294" FontFamily="Kristen ITC" FontSize="18" Text="THE LINK WAS INVALID" Foreground="#FFEB2F2F"  x:Name="Warning" Visibility="Hidden"/>
+        <Button FontFamily="Kristen ITC" FontSize="24" Content="Go back" HorizontalAlignment="Left" Margin="49,474,0,0" VerticalAlignment="Top" Width="164" Height="56" Click="GoBack" BorderBrush="Transparent" Background="White" Foreground="Black">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="30"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <TextBlock FontSize="36" FontFamily="Kristen ITC"  Margin="225,462,11,25.4" x:Name="easterEgg"/>
+        <Button Click="FindFile" HorizontalAlignment="Left" Margin="683,303,0,0" VerticalAlignment="Top" Width="44" Height="34" Foreground="Black" RenderTransformOrigin="-0.743,1.994">
+            <Button.Background>
+                <ImageBrush ImageSource="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\file icon.png"></ImageBrush>
+            </Button.Background>
+        </Button>
     </Grid>
 </UserControl>

@@ -5,9 +5,81 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PuzzleClient.views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="580" d:DesignWidth="800">
     <Grid>
-        <Image HorizontalAlignment="Left" Height="246" Margin="196,88,0,0" VerticalAlignment="Top" Width="364" Source="C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\Result.jpg"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="237*"/>
+            <RowDefinition Height="343*"/>
+        </Grid.RowDefinitions>
+        <Grid.Background>
+            <ImageBrush Viewport="0,0,800,580" ViewportUnits="Absolute" ImageSource="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\pixel stuff.png"/>
+        </Grid.Background>
+        <Image HorizontalAlignment="Left" Height="246" Margin="214,130,0,0" VerticalAlignment="Top" Width="364" x:Name="image" Source="C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\Result.jpg" Grid.RowSpan="2"/>
+        <Button FontFamily="Kristen ITC" FontSize="24" Content="Go back" HorizontalAlignment="Left" Margin="36,211.2,0,0" VerticalAlignment="Top" Width="164" Height="56" Click="GoBack" BorderBrush="Transparent" x:Name="Butt" Background="White" Foreground="Black" Grid.Row="1">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="30"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Border Background="Gold" BorderThickness="1" HorizontalAlignment="Left" Height="265" Margin="201,117,0,0" VerticalAlignment="Top" Width="14" Grid.RowSpan="2"/>
+        <Border Background="Gold" BorderThickness="1" HorizontalAlignment="Left" Height="381" Margin="385,186,0,0" VerticalAlignment="Top" Width="16" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="89.894"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+        </Border>
+        <Border Background="Gold" BorderThickness="1" HorizontalAlignment="Left" Height="265" Margin="580,118,0,0" VerticalAlignment="Top" Width="15" Grid.RowSpan="2">
+            <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
+        </Border>
+        <Border Background="Gold" BorderThickness="1" HorizontalAlignment="Left" Height="387" Margin="392,-72,0,0" VerticalAlignment="Top" Width="15" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+            <Border.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="90.248"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Border.RenderTransform>
+        </Border>
+
+        <Image HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="127" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\pngegg.png" Margin="641,52,0,0"/>
+        <Image HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="127" Source="/PuzzleClient;component/Resources/pngegg.png" Margin="638,204,0,0" Grid.RowSpan="2"/>
+        <Image HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="127" Source="/PuzzleClient;component/Resources/pngegg.png" Margin="643,106.2,0,0" Grid.Row="1"/>
+        <Image HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="112" Source="/PuzzleClient;component/Resources/pngegg.png" Margin="60,67,0,0" RenderTransformOrigin="0.5,0.5">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Image HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="121" Source="/PuzzleClient;component/Resources/pngegg.png" Margin="61,212,0,0" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Image HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="115" Source="/PuzzleClient;component/Resources/pngegg.png" Margin="57,97.2,0,0" RenderTransformOrigin="0.5,0.5" Grid.Row="1">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
 
     </Grid>
 </UserControl>
