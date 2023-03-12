@@ -17,7 +17,8 @@ private:
 	vector<vector<Point>> findContours(Mat grid);
 	Mat bitwise_and_255(Mat mask, int f);
 	double getAreaBetweenPoints(vector<Point> contour, Point start, Point end);
-	vector<Point> UpdateContour(PuzzlePiece piece, Point new_center);
+	PuzzlePiece UpdateContour(PuzzlePiece piece, Point new_center);
+	void makeTransparent(Mat image);
 
 	vector<Point> neighbors(const Point& p) {
 		return {

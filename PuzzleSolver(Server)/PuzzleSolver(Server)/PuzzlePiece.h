@@ -6,7 +6,6 @@ private:
 	vector<Point> _contour;
 	Point _center;
 	string type;
-	Mat _mask;
 	vector<Point> _points;
 	int _id;
 
@@ -27,10 +26,14 @@ public:
 	vector<Point> getContour();
 	vector<Point> getPoints();
 	Point getCenter();
+	Mat _mask;
+
 	bool checkMovement();
 	void Moved();
 
 	void setContour(vector<Point> contour);
+	void setPoints(vector<Point> points);
+	void setCenter(Point center);
 
 	vector<Side> sides;
 

@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="PuzzleClient.views.Title"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PuzzleClient.views"
+             mc:Ignorable="d" 
+             d:DesignHeight="580" d:DesignWidth="800">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush Viewport="0,0,800,580" ViewportUnits="Absolute" ImageSource="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\vecteezy_binary-code-background-abstract-technology-digital-binary_4525039.jpg" TileMode="Tile"/>
+        </Grid.Background>
+        <ContentControl FontFamily="Stencil" Foreground="#FFBF5F5F">
+            <Image HorizontalAlignment="Left" Height="131" VerticalAlignment="Top" x:Name="img4" Width="154" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\confetti.png" Margin="155,327,0,0"/>
+        </ContentControl>
+        <Button FontFamily="Kristen ITC" FontSize="36" Content="Enter" HorizontalAlignment="Left" Margin="300,428,0,0" VerticalAlignment="Top" Width="198" Height="68" Click="Entered" BorderBrush="Transparent" x:Name="Butt" Background="White" Foreground="Black">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="30"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Image Height="196" VerticalAlignment="Top" x:Name="img1" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\gali-anim1.gif" Margin="-3,328,549,0"/>
+        <Image HorizontalAlignment="Left" Height="196" VerticalAlignment="Top" Width="240" x:Name="img2" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\gali-anim1.gif" Margin="559,342,0,0" RenderTransformOrigin="0.5,0.5">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
+        <Image Height="131" VerticalAlignment="Top" x:Name="img3" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\confetti.png" Margin="533,318,113,0"/>
+        <Image Height="379" VerticalAlignment="Top"  Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\product.png" Margin="220,42,96,0"/>
+
+    </Grid>
+</UserControl>

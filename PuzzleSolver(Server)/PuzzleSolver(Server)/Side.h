@@ -25,6 +25,7 @@ typedef unsigned __int32 uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 
+
 class Side
 {
 	public:
@@ -33,6 +34,7 @@ class Side
 			_contour = contour;
 			A = a;
 			B = b;
+			flat = false;
 
 			_id = num;
 		}
@@ -44,4 +46,5 @@ class Side
 		
 		int _id;
 		string matchId;
+		bool flat;
 };

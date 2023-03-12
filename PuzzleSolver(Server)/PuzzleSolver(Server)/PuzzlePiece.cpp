@@ -74,6 +74,16 @@ void PuzzlePiece::Moved()
 	_hasMoved = true;
 }
 
+void PuzzlePiece::setPoints(vector<Point> points)
+{
+	_points = points;
+}
+
+void PuzzlePiece::setCenter(Point center)
+{
+	_center = center;
+}
+
 /*
 
 	This function uses opencv functio s in order to find the points on the mask that have the most
@@ -86,7 +96,7 @@ void PuzzlePiece::findEdgePoints()
 {
 	Mat dst = Mat(_mask.size(), _mask.type());
 
-	cornerHarris(_mask, dst, 20, 31, 0.04);
+ 	cornerHarris(_mask, dst, 20, 31, 0.04);
 	dilate(dst, dst, Mat());
 	dst.mul(_mask);
 	cv::Mat data = dst.clone();
@@ -116,9 +126,8 @@ void PuzzlePiece::findEdgePoints()
 	img2 = binary_channel;
 	Mat image;
 
-
 	int target = 90; //deg
-	int delta = 5; //deg
+	int delta = 7; //deg
 	vector<Point> bestpoints;
 	vector<Point> maxPoints;
 
@@ -145,9 +154,11 @@ void PuzzlePiece::findEdgePoints()
 					}
 
 
-					if ((Area(points) >= maxArea) && deg90_counter == 2) {
+					if ((Area(points) >= maxArea) && deg90_counter >= 2) {
 						maxArea = Area(points);
 						maxPoints = points;
+
+
 					}
 
 				}
@@ -259,10 +270,8 @@ void PuzzlePiece::seperateSubContours()
 			i = _contour.size() - 1;
 		}
 	}
-	
 
-	imshow("PIC", _pic);
-	waitKey(0);
+	imshow("picture", _pic);
 
 	sides.push_back(Side(vec1, vec1[0], vec1[vec1.size() - 1], 0));
 	sides.push_back(Side(vec2, vec2[0], vec2[vec2.size() - 1], 1));
@@ -324,9 +333,6 @@ void PuzzlePiece::fixRotation()
 	cv::Mat rot_mat = cv::getRotationMatrix2D(center, angle, 1.0);
 	cv::Mat rotated_image;
 	cv::warpAffine(_pic, rotated_image, rot_mat, _pic.size());
-
-	imshow("rotated", rotated_image);
-	waitKey(0);
 
 	_pic = rotated_image;
 }
