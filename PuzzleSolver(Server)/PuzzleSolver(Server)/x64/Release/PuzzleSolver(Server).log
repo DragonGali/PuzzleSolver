@@ -1,41 +1,8 @@
-﻿  Picture.cpp
+﻿  PuzzleSolver(Server).cpp
 C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.h(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(111,48): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=uchar
-          ]
-C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(116,50): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(302,37): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=double
-          ]
-          and
-          [
-              _Tp=int
-          ]
-C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(302,28): warning C4244: 'argument': conversion from '_Tp' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=double
-          ]
-          and
-          [
-              _Tp=int
-          ]
-C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\Picture.cpp(397,33): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=uchar
-          ]
   Generating code
-  1 of 1007 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+  103 of 1089 functions ( 9.5%) were compiled, the rest were copied from previous compilation.
+    80 functions were new in current compilation
+    81 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   PuzzleSolver(Server).vcxproj -> C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\x64\Release\PuzzleSolver(Server).exe

@@ -12,19 +12,19 @@ Picture::Picture(string link)
 
 	findMatches();
 
-	vector<vector<Point>> temp;
-	auto pos = _pieces[1].sides[0].matchId.find("_");
-	int match = stoi(_pieces[1].sides[0].matchId.substr(0, pos));
-	int side = stoi(_pieces[1].sides[0].matchId.substr(0, pos + 1));
+//	vector<vector<Point>> temp;
+//	auto pos = _pieces[2].sides[0].matchId.find("_");
+//	int match = stoi(_pieces[2].sides[0].matchId.substr(0, pos));
+//	int side = stoi(_pieces[2].sides[0].matchId.substr(0, pos + 1));
 
-	temp.push_back(_pieces[1].sides[0]._contour);
-	temp.push_back(_pieces[match].sides[side]._contour);
+//	temp.push_back(_pieces[2].sides[0]._contour);
+//	temp.push_back(_pieces[match].sides[side]._contour);
 
-	drawContours(Image, temp, -1, Scalar(255, 255, 255), 2);
+ //	drawContours(Image, temp, -1, Scalar(255, 255, 255), 2);
 
-	ShowPicture(Image);
+//	ShowPicture(Image);
 
-	movePieces();
+ 	movePieces();
 
 	
 
@@ -492,10 +492,10 @@ cv::Rect getBoundingBox(cv::Mat image) {
 		for (int j = 0; j < image.cols; j++) {
 			cv::Vec3b pixel = image.at<cv::Vec3b>(i, j);
 			if (pixel[0] != 0 || pixel[1] != 0 || pixel[2] != 0) {
-				x1 = std::min(x1, j);
-				x2 = std::max(x2, j);
-				y1 = std::min(y1, i);
-				y2 = std::max(y2, i);
+				x1 = min(x1, j);
+				x2 = max(x2, j);
+				y1 = min(y1, i);
+				y2 = max(y2, i);
 			}
 		}
 	}
@@ -545,7 +545,6 @@ void Picture::movePieces()
 	cv::Rect bb1 = cv::boundingRect(_pieces[0].getContour());
 	cv::Mat src1 = img1(bb1);
 
-	ShowPicture(src1);
 
 	src1(Rect(0, 0, src1.cols, src1.rows)).copyTo(dst(cv::Rect(dst.cols / 2, dst.rows / 2, src1.cols, src1.rows)));
 
@@ -554,8 +553,6 @@ void Picture::movePieces()
 
 	for (int i = 0; i < _pieces.size(); i++)
 	{
-		imshow("dst", dst);
-		waitKey(0);
 
 		img1 = _pieces[i].getImage();
 		bb1 = cv::boundingRect(_pieces[i].getPoints());
@@ -565,14 +562,16 @@ void Picture::movePieces()
 		Point img1Cords = Point(dst.cols / 2, dst.rows / 2);
 
 		// left
-		if (_pieces[i].sides[0].flat != true)
+		if (_pieces[i].sides[0].flat != true && _pieces[i].sides[0].matchId != "")
 		{
 
  			auto pos = _pieces[i].sides[0].matchId.find("_");
 			int match = stoi(_pieces[i].sides[0].matchId.substr(0, pos));
-			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
+			int side = stoi(_pieces[i].sides[0].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() != true)
+			cout << "move: " << _pieces[match].checkMovement() << " flat: " << _pieces[match].sides[side].flat << "\n";
+
+			if (_pieces[match].checkMovement() != true && _pieces[match].sides[side].flat != true)
 			{
 				Mat img2 = _pieces[match].getImage();
 
@@ -584,22 +583,20 @@ void Picture::movePieces()
 
 				img1Cords = Point(img1Cords.x - bb1.width + (bb1.x - img1temp.x) - (bb2.x - temp.x), img1Cords.y + (temp.y - bb2.y));
 
-				ShowPicture(src2);
-
 				_pieces[match].Moved();
 
 			}
 		}
 
 		//down
-		if (_pieces[i].sides[1].flat != true)
+		if (_pieces[i].sides[1].flat != true && _pieces[i].sides[1].matchId != "")
 		{
 
 			auto pos = _pieces[i].sides[1].matchId.find("_");
 			int match = stoi(_pieces[i].sides[1].matchId.substr(0, pos));
-			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
+			int side = stoi(_pieces[i].sides[1].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() != true)
+			if (_pieces[match].checkMovement() != true && _pieces[match].sides[side].flat != true)
 			{
 
 
@@ -620,7 +617,7 @@ void Picture::movePieces()
 		}
 
 		//right
-		if (_pieces[i].sides[2].flat != true)
+		if (_pieces[i].sides[2].flat != true && _pieces[i].sides[2].matchId != "")
 		{
 
 
@@ -628,7 +625,7 @@ void Picture::movePieces()
 			int match = stoi(_pieces[i].sides[2].matchId.substr(0, pos));
 			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() != true) 
+			if (_pieces[match].checkMovement() != true && _pieces[match].sides[side].flat != true)
 			{
 
 
@@ -650,14 +647,14 @@ void Picture::movePieces()
 		}
 
 		//up
-		if (_pieces[i].sides[3].flat != true)
+		if (_pieces[i].sides[3].flat != true && _pieces[i].sides[3].matchId != "")
 		{
 
 			auto pos = _pieces[i].sides[3].matchId.find("_");
 			int match = stoi(_pieces[i].sides[3].matchId.substr(0, pos));
-			int side = stoi(_pieces[i].sides[2].matchId.substr(0, pos + 1));
+			int side = stoi(_pieces[i].sides[3].matchId.substr(0, pos + 1));
 
-			if (_pieces[match].checkMovement() != true)
+			if (_pieces[match].checkMovement() != true && _pieces[match].sides[side].flat != true)
 			{
 
 				Mat img2 = _pieces[match].getImage();
@@ -675,6 +672,9 @@ void Picture::movePieces()
 
 			}
 		}
+
+		imshow("dst", dst);
+		waitKey(0);
 	}
 
 	imwrite("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\Result.jpg", dst);
@@ -727,8 +727,7 @@ void Picture::findMatches()
 
 			for (int j = 0; j < _pieces.size(); j++)
 			{
-				for (int l = 0; l < 4; l++)
-				{
+
 					if (j == i)
 					{
 						j++;
@@ -736,6 +735,29 @@ void Picture::findMatches()
 
 					if (j < _pieces.size())
 					{
+						int l = 0;
+
+						if (k == 0)
+						{
+							l = 2;
+						}
+
+						else if (k == 1)
+						{
+							l = 3;
+						}
+
+						else if (k == 2)
+						{
+							l = 0;
+						}
+
+						else
+						{
+							l = 1;
+						}
+
+
 						double side2Area = getAreaBetweenPoints(_pieces[j].sides[l]._contour, _pieces[j].sides[l].A, _pieces[j].sides[l].B);
 
 						if (abs(side1Area - side2Area) == 0)
@@ -751,9 +773,12 @@ void Picture::findMatches()
 						if (side2Area <= 0)
 						{
 							_pieces[j].sides[l].flat = true;
-							
 						}
 
+						if (side1Area <= 0 || side2Area <= 0)
+						{
+							continue;
+						}
 
 
 						if (abs(side1Area - side2Area) < minSimilarity) {
@@ -774,10 +799,6 @@ void Picture::findMatches()
 
 						}
 					}
-				}
-				
-
-
 
 			}
 

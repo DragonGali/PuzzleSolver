@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using PuzzleClient.viewModels;
+
 namespace PuzzleClient.views
 {
     /// <summary>
@@ -23,6 +25,11 @@ namespace PuzzleClient.views
         public Image()
         {
             InitializeComponent();
+        }
+
+        private void GoBack(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.DataContext = new MenuViewModel();
         }
     }
 }

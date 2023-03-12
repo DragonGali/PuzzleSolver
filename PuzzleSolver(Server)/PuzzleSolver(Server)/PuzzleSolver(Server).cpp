@@ -4,8 +4,8 @@
 
 int main()
 {
-    /*
-    ifstream InFile("C:/Users/magshimim/Desktop/PuzzleSolver/puzzle-maker/ClientLink.text"); // create an output file stream object
+    
+    ifstream InFile("C://Users//magshimim//Desktop//PuzzleSolver//puzzle-maker//ClientLink.txt"); // create an output file stream object
     string text;
 
     if (InFile.is_open()) { // check if the file is open
@@ -16,8 +16,9 @@ int main()
     else {
         cout << "Unable to open file" << endl;
     }
-    */
+    
 
-    Picture picture("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\Pictures\\test.jpg");
+   // Picture picture("C://Users//magshimim//Desktop//PuzzleSolver//puzzle-maker//Pictures//test 2.1.jpg");
+    
 
 }

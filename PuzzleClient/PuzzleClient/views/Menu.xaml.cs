@@ -25,11 +25,40 @@ namespace PuzzleClient.views
         public Menu()
         {
             InitializeComponent();
+            if (((MainWindow)Application.Current.MainWindow).kirby == true)
+            {
+                kirby.Visibility = Visibility.Visible;
+            }
+
+            if(((MainWindow)Application.Current.MainWindow).senku == true)
+            {
+                senku.Visibility = Visibility.Visible;
+            }
+
+            if (((MainWindow)Application.Current.MainWindow).nanachi == true)
+            {
+                nanachi.Visibility = Visibility.Visible;
+            }
+
+            if (((MainWindow)Application.Current.MainWindow).dor == true)
+            {
+                dor.Visibility = Visibility.Visible;
+            }
         }
 
         private void GoToPuzzleSolve(object sender, RoutedEventArgs e)
         {
             Application.Current.MainWindow.DataContext = new EnterLinkViewModel();
+        }
+
+        private void GoToHelp(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.DataContext = new HelpViewModel();
+        }
+
+        private void GoToCredits(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.DataContext = new CreditsViewModel();
         }
     }
 }

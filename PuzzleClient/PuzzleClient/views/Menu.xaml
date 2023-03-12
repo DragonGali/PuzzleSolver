@@ -5,8 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PuzzleClient.views"
              mc:Ignorable="d" 
-             d:DesignHeight="580" d:DesignWidth="1040">
+             d:DesignHeight="580" d:DesignWidth="800">
     <Grid>
-        <Button FontFamily="Impact" FontSize="30" FontWeight="ExtraBold" Content="Solve puzzle" HorizontalAlignment="Left" Margin="357,100,0,0" VerticalAlignment="Top" Width="228" Height="58" Click="GoToPuzzleSolve" BorderBrush="Transparent"/>
+        <Grid.Background>
+            <ImageBrush Viewport="0,0,800,580" ViewportUnits="Absolute" ImageSource="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\trivia beckground(better).png" TileMode="Tile"/>
+        </Grid.Background>
+        <Button FontFamily="Kristen ITC" FontSize="30" FontWeight="ExtraBold" Content="Solve puzzle" HorizontalAlignment="Left" Margin="281,142,0,0" VerticalAlignment="Top" Width="228" Height="58" Click="GoToPuzzleSolve" BorderBrush="Black" Background="White"/>
+        <Button FontFamily="Kristen ITC" FontSize="30" FontWeight="ExtraBold" Content="help" HorizontalAlignment="Left" Margin="282,223,0,0" VerticalAlignment="Top" Width="228" Height="58" Click="GoToHelp" BorderBrush="Black" Background="White"/>
+        <Button FontFamily="Kristen ITC" FontSize="30" FontWeight="ExtraBold" Content="credits" HorizontalAlignment="Left" Margin="283,308,0,0" VerticalAlignment="Top" Width="228" Height="58" Click="GoToCredits" BorderBrush="Black" Background="White"/>
+        <Image Height="131" VerticalAlignment="Top" x:Name="kirby" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\kirby.png" Margin="147,59,499,0" Visibility="Hidden"/>
+        <Image Height="131" VerticalAlignment="Top" x:Name="senku" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\chibi senku.png" Margin="501,101,145,0" Visibility="Hidden"/>
+        <Image Height="160" VerticalAlignment="Top" x:Name="nanachi" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\nanachi.png" Margin="-13,437,634,-17" Visibility="Hidden"/>
+        <Image Height="106" VerticalAlignment="Top" x:Name="dor" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\DOR.png" Margin="-20,197,678,0" Visibility="Hidden"/>
+
     </Grid>
 </UserControl>

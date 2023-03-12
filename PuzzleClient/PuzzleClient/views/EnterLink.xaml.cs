@@ -15,9 +15,11 @@ using System.Windows.Shapes;
 
 using System.Text.RegularExpressions;
 using PuzzleClient.viewModels;
+using System.Threading;
 
 using System.IO;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace PuzzleClient.views
 {
@@ -42,12 +44,55 @@ namespace PuzzleClient.views
         {
             if (Link.Text != "" && IsValidUrl(Link.Text))
             {
+                File.WriteAllText("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\ClientLink.txt", Link.Text);
+                Process.Start("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\PuzzleSolver(Server)\\x64\\Release\\PuzzleSolver(Server).exe");
+                Thread.Sleep(10000);
                 Application.Current.MainWindow.DataContext = new ImageViewModel();
+            }
+
+            else if(Link.Text == "poyo")
+            {
+                ((MainWindow)Application.Current.MainWindow).kirby = true;
+                easterEgg.Text = "Kirby Unlocked";
+            }
+
+            else if(Link.Text == "sosoruzekorewa")
+            {
+                ((MainWindow)Application.Current.MainWindow).senku = true;
+                easterEgg.Text = "Senku unlocked";
+            }
+
+            else if(Link.Text == "Naaa")
+            {
+                ((MainWindow)Application.Current.MainWindow).nanachi = true;
+                easterEgg.Text = "Nanachi unlocked";
+            }
+
+            else if(Link.Text == "Preceed")
+            {
+                ((MainWindow)Application.Current.MainWindow).dor = true;
+                easterEgg.Text = "Dissspointment unlocked";
             }
 
             else
             {
                 Warning.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void GoBack(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.DataContext = new MenuViewModel();
+        }
+
+        private void FindFile(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // The user selected a file, so do something with it
+                string selectedFilename = openFileDialog.FileName;
+                Link.Text = selectedFilename;
             }
         }
     }
