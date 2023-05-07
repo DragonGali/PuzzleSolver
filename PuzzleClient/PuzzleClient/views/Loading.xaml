@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="PuzzleClient.views.Loading"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PuzzleClient.views"
+             mc:Ignorable="d" 
+             d:DesignHeight="580" d:DesignWidth="800">
+    <Grid>
+        <MediaElement LoadedBehavior="Play" x:Name="loadingAnim"  Source="C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\PuzzleClient\\PuzzleClient\\Resources\\loading.gif"></MediaElement>
+        <TextBlock FontSize="36" FontFamily="Kristen ITC" HorizontalAlignment="Left" Margin="221,392,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="359" Height="101" Text="Easter egg hints: " Foreground="#FFDAD656"/>
+        <TextBlock FontSize="36" FontFamily="Kristen ITC" HorizontalAlignment="Left" x:Name="HintsBar" Margin="58,457,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="694" Height="101" Text=""/>
+        <Button FontFamily="Kristen ITC" FontSize="22" Content="Got it ->" HorizontalAlignment="Left" Margin="67,20,0,0" VerticalAlignment="Top" Width="164" Height="56" Click="GoForward" BorderBrush="Black" x:Name="Butt" Background="White" Foreground="Black">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="30"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
+    </Grid>
+</UserControl>

@@ -9,5 +9,7 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/6d50b575eda54007a0b8d68bdde0612a.webm")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/lofi_girl_dreams_113883.wav")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/sound%20affect.wav")]
 
 

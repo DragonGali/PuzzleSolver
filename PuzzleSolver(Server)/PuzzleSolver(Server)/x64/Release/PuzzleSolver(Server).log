@@ -1,8 +1,21 @@
-﻿  PuzzleSolver(Server).cpp
+﻿  PuzzlePiece.cpp
 C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.h(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.cpp(14,13): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.cpp(142,51): warning C4244: 'argument': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=int
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.cpp(142,36): warning C4244: 'argument': conversion from 'double' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=int
+          ]
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.cpp(244,29): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\PuzzleSolver(Server)\PuzzlePiece.cpp(295,27): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   Generating code
-  103 of 1089 functions ( 9.5%) were compiled, the rest were copied from previous compilation.
-    80 functions were new in current compilation
-    81 functions had inline decision re-evaluated but remain unchanged
+  3 of 1147 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    7 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   PuzzleSolver(Server).vcxproj -> C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleSolver(Server)\x64\Release\PuzzleSolver(Server).exe

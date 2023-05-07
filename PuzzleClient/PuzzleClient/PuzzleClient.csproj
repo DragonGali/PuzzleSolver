@@ -59,7 +59,9 @@
     <Compile Include="viewModels\EnterLinkViewModel.cs" />
     <Compile Include="viewModels\HelpViewModel.cs" />
     <Compile Include="viewModels\ImageViewModel.cs" />
+    <Compile Include="viewModels\LoadingViewTemplate.cs" />
     <Compile Include="viewModels\MenuViewModel.cs" />
+    <Compile Include="viewModels\ThankYouViewModel.cs" />
     <Compile Include="viewModels\TitleViewModel.cs" />
     <Compile Include="views\Credits.xaml.cs">
       <DependentUpon>Credits.xaml</DependentUpon>
@@ -73,8 +75,14 @@
     <Compile Include="views\Image.xaml.cs">
       <DependentUpon>Image.xaml</DependentUpon>
     </Compile>
+    <Compile Include="views\Loading.xaml.cs">
+      <DependentUpon>Loading.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\ThankYou.xaml.cs">
+      <DependentUpon>ThankYou.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\Title.xaml.cs">
       <DependentUpon>Title.xaml</DependentUpon>
@@ -107,7 +115,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="views\Loading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="views\Menu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\ThankYou.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -179,6 +195,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\6d50b575eda54007a0b8d68bdde0612a.webm" />
+    <Resource Include="Resources\thank you.jpg" />
+    <Resource Include="Resources\wilson.png" />
+    <Resource Include="Resources\loading.gif" />
+    <Content Include="Resources\lofi_girl_dreams_113883.wav" />
+    <Content Include="Resources\sound affect.wav" />
     <Resource Include="Resources\DOR.png" />
     <Resource Include="Resources\file icon.png" />
     <Resource Include="Resources\nanachi.png" />

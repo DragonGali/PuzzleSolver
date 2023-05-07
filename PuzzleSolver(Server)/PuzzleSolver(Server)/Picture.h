@@ -12,13 +12,14 @@ private:
 	Mat CreateGrayScale();
 	Mat EdgeDetection();
 	Mat sobelFilter(Mat grayImage);
+
+	// *functions i ended up not using but spent a lot of time coding*
 	Mat applyNonMaxSupression(Mat& srcImage);
 	Mat threshold(Mat imgin, int low, int high);
+
 	vector<vector<Point>> findContours(Mat grid);
 	Mat bitwise_and_255(Mat mask, int f);
-	double getAreaBetweenPoints(vector<Point> contour, Point start, Point end);
-	PuzzlePiece UpdateContour(PuzzlePiece piece, Point new_center);
-	void makeTransparent(Mat image);
+	Mat Transport(Mat src, Mat dst, Point point);
 
 	vector<Point> neighbors(const Point& p) {
 		return {
@@ -31,7 +32,6 @@ private:
 public:
 	Picture(string link);
 	void CreateMask();
-	void ShowPicture(Mat image);
 	void ResizeCanvas();
 	void findMatches();
 	void movePieces();

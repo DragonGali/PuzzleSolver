@@ -46,32 +46,37 @@ namespace PuzzleClient.views
             {
                 File.WriteAllText("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\ClientLink.txt", Link.Text);
                 Process.Start("C:\\Users\\magshimim\\Desktop\\PuzzleSolver\\puzzle-maker\\PuzzleSolver(Server)\\x64\\Release\\PuzzleSolver(Server).exe");
-                Thread.Sleep(10000);
-                Application.Current.MainWindow.DataContext = new ImageViewModel();
+                Application.Current.MainWindow.DataContext = new LoadingViewTemplate();
             }
 
-            else if(Link.Text == "poyo")
+            else if (Link.Text == "poyo")
             {
                 ((MainWindow)Application.Current.MainWindow).kirby = true;
                 easterEgg.Text = "Kirby Unlocked";
             }
 
-            else if(Link.Text == "sosoruzekorewa")
+            else if (Link.Text == "sosoruzekorewa")
             {
                 ((MainWindow)Application.Current.MainWindow).senku = true;
                 easterEgg.Text = "Senku unlocked";
             }
 
-            else if(Link.Text == "Naaa")
+            else if (Link.Text == "Naaa")
             {
                 ((MainWindow)Application.Current.MainWindow).nanachi = true;
                 easterEgg.Text = "Nanachi unlocked";
             }
 
-            else if(Link.Text == "Preceed")
+            else if (Link.Text == "Preceed")
             {
                 ((MainWindow)Application.Current.MainWindow).dor = true;
                 easterEgg.Text = "Dissspointment unlocked";
+            }
+
+            else if (Link.Text == "Wilson.P.Higgsburry")
+            {
+                ((MainWindow)Application.Current.MainWindow).wilson = true;
+                easterEgg.Text = "Wilson Unlocked";
             }
 
             else

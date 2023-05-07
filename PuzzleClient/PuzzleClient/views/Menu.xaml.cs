@@ -24,26 +24,44 @@ namespace PuzzleClient.views
     {
         public Menu()
         {
+            int counter = 0;
+
             InitializeComponent();
             if (((MainWindow)Application.Current.MainWindow).kirby == true)
             {
                 kirby.Visibility = Visibility.Visible;
+                counter++;
             }
 
             if(((MainWindow)Application.Current.MainWindow).senku == true)
             {
                 senku.Visibility = Visibility.Visible;
+                counter++;
             }
 
             if (((MainWindow)Application.Current.MainWindow).nanachi == true)
             {
                 nanachi.Visibility = Visibility.Visible;
+                counter++;
             }
 
             if (((MainWindow)Application.Current.MainWindow).dor == true)
             {
                 dor.Visibility = Visibility.Visible;
+                counter++;
             }
+
+            if (((MainWindow)Application.Current.MainWindow).wilson == true)
+            {
+                wilson.Visibility = Visibility.Visible;
+                counter++;
+            }
+
+            if(counter == 5)
+            {
+                SecretButton.Visibility = Visibility.Visible;
+            }
+
         }
 
         private void GoToPuzzleSolve(object sender, RoutedEventArgs e)
@@ -59,6 +77,11 @@ namespace PuzzleClient.views
         private void GoToCredits(object sender, RoutedEventArgs e)
         {
             Application.Current.MainWindow.DataContext = new CreditsViewModel();
+        }
+
+        private void GetSecret(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.DataContext = new ThankYouViewModel();
         }
     }
 }

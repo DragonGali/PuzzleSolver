@@ -28,3 +28,7 @@ C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\o
 C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\views\Credits.g.cs
 C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\views\Credits.baml
 C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\PuzzleClient_Content.g.cs
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\views\Loading.g.cs
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\views\Loading.baml
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\views\ThankYou.g.cs
+C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\obj\Debug\views\ThankYou.baml

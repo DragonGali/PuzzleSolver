@@ -33,6 +33,14 @@
         <DataTemplate x:Name="CreditsViewTemplate" DataType="{x:Type viewmodels:CreditsViewModel}">
             <views:Credits DataContext="{Binding}"/>
         </DataTemplate>
+
+        <DataTemplate x:Name="LoadingViewModel" DataType="{x:Type viewmodels:LoadingViewTemplate}">
+            <views:Loading DataContext="{Binding}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Name="ThankYouViewTemplate" DataType="{x:Type viewmodels:ThankYouViewModel}">
+            <views:ThankYou DataContext="{Binding}"/>
+        </DataTemplate>
     </Window.Resources>
     
     

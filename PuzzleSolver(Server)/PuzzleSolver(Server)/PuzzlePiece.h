@@ -12,6 +12,7 @@ private:
 	double L(Point A, Point B);
 	double angle(Point A, Point B, Point C);
 	double Area(vector<Point> corners);
+	double maxAngle(Point A, Point B, Point C);
 
 	bool _hasMoved;
 
@@ -34,6 +35,7 @@ public:
 	void setContour(vector<Point> contour);
 	void setPoints(vector<Point> points);
 	void setCenter(Point center);
+	bool isRectengle(vector<Point> points);
 
 	vector<Side> sides;
 

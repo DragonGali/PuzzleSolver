@@ -14,6 +14,7 @@
 #include <cmath>
 #include <complex>
 #include <fstream>
+
 #define _USE_MATH_DEFINES
 
 using namespace std;
@@ -29,22 +30,21 @@ typedef unsigned __int64 uint64_t;
 class Side
 {
 	public:
-		Side(vector<Point> contour, Point a, Point b, int num)
-		{
-			_contour = contour;
-			A = a;
-			B = b;
-			flat = false;
-
-			_id = num;
-		}
+		Side(vector<Point> contour, int num);
+		double FindDifference(vector<Point> v1, vector<Point> v2);
 
 		vector<Point> _contour;
-		Point A;
-		Point B;
-
 		
 		int _id;
 		string matchId;
-		bool flat;
+		string _type;
+
+	private:
+		double euclidean_distance(Point p1, Point p2);
+		double p_distance(Point p1, vector<Point> curve);
+		double curve_metrix(vector<Point> curve1, vector<Point> curve2);
+		Point centroid(vector<Point> curve);
+		vector<Point> recenter(vector<Point> curve);
+		bool isFlat(vector<Point> contour);
+
 };

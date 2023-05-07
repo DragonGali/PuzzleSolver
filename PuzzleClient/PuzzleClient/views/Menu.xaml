@@ -17,6 +17,9 @@
         <Image Height="131" VerticalAlignment="Top" x:Name="senku" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\chibi senku.png" Margin="501,101,145,0" Visibility="Hidden"/>
         <Image Height="160" VerticalAlignment="Top" x:Name="nanachi" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\nanachi.png" Margin="-13,437,634,-17" Visibility="Hidden"/>
         <Image Height="106" VerticalAlignment="Top" x:Name="dor" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\DOR.png" Margin="-20,197,678,0" Visibility="Hidden"/>
+        <Image Height="106" VerticalAlignment="Top" x:Name="wilson" Source="C:\Users\magshimim\Desktop\PuzzleSolver\puzzle-maker\PuzzleClient\PuzzleClient\Resources\wilson.png" Margin="520,295,138,0" Visibility="Hidden"/>
+
+        <Button FontFamily="Kristen ITC" FontSize="30" FontWeight="ExtraBold" Content="Secret" HorizontalAlignment="Left" VerticalAlignment="Top" Width="228" Height="58" Click="GetSecret"  x:Name="SecretButton" BorderBrush="Black" Background="#FFFFD611" Margin="289,479,0,0" Foreground="White" Visibility="Hidden"/>
 
     </Grid>
 </UserControl>

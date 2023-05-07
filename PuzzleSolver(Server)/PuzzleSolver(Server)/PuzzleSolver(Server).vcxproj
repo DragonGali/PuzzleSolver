@@ -150,6 +150,7 @@
     <ClCompile Include="Picture.cpp" />
     <ClCompile Include="PuzzlePiece.cpp" />
     <ClCompile Include="PuzzleSolver(Server).cpp" />
+    <ClCompile Include="Side.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Picture.h" />

@@ -31,7 +31,7 @@ PuzzlePiece::PuzzlePiece(vector<Point> contour, Point center, Mat pic, Mat mask,
 	{
 		seperateSubContours();
 	}
-	//fixRotation();
+	//fixRotation(); // im sorry that i ended up not using this... "perhaps one day"
 }
 
 int PuzzlePiece::getId()
@@ -86,11 +86,33 @@ void PuzzlePiece::setCenter(Point center)
 
 /*
 
-	This function uses opencv functio s in order to find the points on the mask that have the most
+	This function uses opencv functios in order to find the points on the mask that have the most
 	edge in them, then the function filters out the points by finding a set of four points that have 90 degrees between
 	them and have the most area.
 
 */
+
+bool PuzzlePiece::isRectengle(vector<Point> points)
+{
+	if (points.size() != 4) {
+		return false; // not enough points to form a rectangle
+	}
+
+	// calculate the length of each side
+	vector<double> sideLengths;
+	for (int i = 0; i < 4; i++) {
+		int j = (i + 1) % 4; // next point in the sequence
+		double sideLength = norm(points[i] - points[j]); // Euclidean distance between points
+		sideLengths.push_back(sideLength);
+	}
+
+	// sort the side lengths in ascending order
+	sort(sideLengths.begin(), sideLengths.end());
+
+	// compare the lengths of opposite sides
+	bool isRectangle = (sideLengths[0] == sideLengths[1]) && (sideLengths[2] == sideLengths[3]);
+	return isRectangle;
+}
 
 void PuzzlePiece::findEdgePoints()
 {
@@ -127,7 +149,7 @@ void PuzzlePiece::findEdgePoints()
 	Mat image;
 
 	int target = 90; //deg
-	int delta = 7; //deg
+	int delta = 10; //deg
 	vector<Point> bestpoints;
 	vector<Point> maxPoints;
 
@@ -140,21 +162,23 @@ void PuzzlePiece::findEdgePoints()
 					vector<Point> points = { centroids[i], centroids[j], centroids[k], centroids[l] };
 					int deg90_counter = 0;
 
-					if (abs(angle(points[0], points[1], points[2]) - target) < delta) {
+					if (abs(maxAngle(points[0], points[1], points[2]) - target) < delta) {
 						deg90_counter += 1;
 					}
-					if (abs(angle(points[0], points[1], points[3]) - target) < delta) {
+					if (abs(maxAngle(points[0], points[1], points[3]) - target) < delta) {
 						deg90_counter += 1;
 					}
-					if (abs(angle(points[0], points[2], points[3]) - target) < delta) {
+					if (abs(maxAngle(points[0], points[2], points[3]) - target) < delta) {
 						deg90_counter += 1;
 					}
-					if (abs(angle(points[1], points[2], points[3]) - target) < delta) {
+					if (abs(maxAngle(points[3], points[2], points[1]) - target) < delta) {
 						deg90_counter += 1;
 					}
 
 
-					if ((Area(points) >= maxArea) && deg90_counter >= 2) {
+					if ((Area(points) >= maxArea) && deg90_counter == 4)
+					{
+
 						maxArea = Area(points);
 						maxPoints = points;
 
@@ -169,6 +193,7 @@ void PuzzlePiece::findEdgePoints()
 
 
 	_points.insert(bestpoints.end(), maxPoints.begin(), maxPoints.end());
+	cout << "IsRectengle: " << isRectengle(_points) << "\n";
 	
 }
 
@@ -271,12 +296,10 @@ void PuzzlePiece::seperateSubContours()
 		}
 	}
 
-	imshow("picture", _pic);
-
-	sides.push_back(Side(vec1, vec1[0], vec1[vec1.size() - 1], 0));
-	sides.push_back(Side(vec2, vec2[0], vec2[vec2.size() - 1], 1));
-	sides.push_back(Side(vec3, vec3[0], vec3[vec3.size() - 1], 2));
-	sides.push_back(Side(vec4, vec4[0], vec4[vec4.size() - 1], 3));
+	sides.push_back(Side(vec1, 0));
+	sides.push_back(Side(vec2, 1));
+	sides.push_back(Side(vec3, 2));
+	sides.push_back(Side(vec4, 3));
 
 
 	
@@ -288,9 +311,21 @@ double PuzzlePiece::distance(Point A, Point B)// calculates the distance between
 	return sqrt(pow(A.x - B.x, 2) + pow(A.y - B.y, 2));
 }
 
-double PuzzlePiece::L(Point A, Point B) {//is used to calculate the angle between three points
+
+//REMOVE THIS LATER I DONT NEED TEO FUNCTIONS!!!
+double PuzzlePiece::L(Point A, Point B) {//is used to calculate the angle between t points
 	// Return length between A and B
 	return sqrt(pow(A.x - B.x, 2) + pow(A.y - B.y, 2));
+}
+
+
+double PuzzlePiece::maxAngle(Point A, Point B, Point C)
+{
+	double ang1 = angle(A, B, C);
+	double ang2 = angle(B, A, C);
+	double ang3 = angle(B, C, A);
+
+	return(max(max(ang1, ang2), ang3));
 }
 
 double PuzzlePiece::angle(Point A, Point B, Point C) {// calculates the angle between three points
